@@ -1,0 +1,4 @@
+gdax:
+    build: ./gdax
+    restart: always
+    container_name: GDAX
