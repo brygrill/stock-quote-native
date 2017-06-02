@@ -8,6 +8,9 @@ config.js
 config.json
 serviceAccountKey.json
 
+# Local scripts
+scripts
+
 # Logs
 logs
 *.log
