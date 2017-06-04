@@ -1,26 +1,46 @@
 {
-  "name": "app",
+  "name": "quoteum",
   "version": "0.1.0",
   "private": true,
-  "devDependencies": {
-    "react-native-scripts": "0.0.30",
-    "jest-expo": "~1.0.1",
-    "react-test-renderer": "16.0.0-alpha.6"
+  "description": "Realtime market quotes",
+  "repository": "https://github.com/brygrill/quote-stream.git",
+  "author": "Bryan Grill",
+  "license": "MIT",
+  "jest": {
+    "preset": "jest-expo"
   },
   "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
+  "devDependencies": {
+    "babel-eslint": "^7.2.1",
+    "babel-plugin-lodash": "^3.2.11",
+    "babel-plugin-transform-class-properties": "^6.23.0",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-stage-3": "^6.22.0",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^15.0.1",
+    "eslint-config-prettier": "^1.7.0",
+    "eslint-plugin-class-property": "^1.0.3",
+    "eslint-plugin-flowtype": "^2.30.4",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^5.0.3",
+    "eslint-plugin-react": "^7.0.1",
+    "flow-bin": "^0.44.0",
+    "jest-expo": "~1.0.1",
+    "react-native-scripts": "0.0.30",
+    "react-test-renderer": "16.0.0-alpha.6"
+  },
+  "dependencies": {
+    "expo": "^17.0.0",
+    "react": "16.0.0-alpha.6",
+    "react-native": "^0.44.0",
+    "react-scripts": "^1.0.7"
+  },
   "scripts": {
     "start": "react-native-scripts start",
     "eject": "react-native-scripts eject",
     "android": "react-native-scripts android",
     "ios": "react-native-scripts ios",
     "test": "node node_modules/jest/bin/jest.js --watch"
-  },
-  "jest": {
-    "preset": "jest-expo"
-  },
-  "dependencies": {
-    "expo": "^17.0.0",
-    "react": "16.0.0-alpha.6",
-    "react-native": "^0.44.0"
   }
 }
