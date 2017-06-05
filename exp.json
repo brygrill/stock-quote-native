@@ -1,0 +1,28 @@
+{
+  "name": "expo-new",
+  "description": "No description",
+  "slug": "expo-new",
+  "privacy": "public",
+  "sdkVersion": "17.0.0",
+  "version": "1.0.0",
+  "orientation": "portrait",
+  "primaryColor": "#cccccc",
+  "icon": "./src/assets/icons/app-icon.png",
+  "entryPoint": "./src/main.js",
+  "notification": {
+    "icon": "./src/assets/icons/notification-icon.png",
+    "color": "#000000"
+  },
+  "loading": {
+    "icon": "./src/assets/icons/loading-icon.png",
+    "hideExponentText": false
+  },
+  "packagerOpts": {
+    "assetExts": [
+      "ttf"
+    ]
+  },
+  "ios": {
+    "supportsTablet": true
+  }
+}

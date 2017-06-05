@@ -9,7 +9,7 @@
   "jest": {
     "preset": "jest-expo"
   },
-  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
+  "main": "./src/index.native.js",
   "devDependencies": {
     "babel-eslint": "^7.2.1",
     "babel-plugin-lodash": "^3.2.11",
@@ -31,16 +31,20 @@
     "react-test-renderer": "16.0.0-alpha.6"
   },
   "dependencies": {
-    "expo": "^17.0.0",
+    "@expo/ex-navigation": "~3.0.0",
+    "@expo/samples": "~1.0.3",
+    "expo": "17.0.0",
     "react": "16.0.0-alpha.6",
-    "react-native": "^0.44.0",
-    "react-scripts": "^1.0.7"
+    "react-dom": "16.0.0-alpha.6",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-17.0.0.tar.gz"
   },
   "scripts": {
-    "start": "react-native-scripts start",
-    "eject": "react-native-scripts eject",
+    "start-web": "react-scripts start",
+    "build-web": "react-scripts build",
+    "test-web": "react-scripts test --env=jsdom",
+    "start-native": "react-native-scripts start",
     "android": "react-native-scripts android",
     "ios": "react-native-scripts ios",
-    "test": "node node_modules/jest/bin/jest.js --watch"
+    "test-native": "node node_modules/jest/bin/jest.js"
   }
 }
