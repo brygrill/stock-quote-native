@@ -1,14 +1,14 @@
 {
-  "name": "expo-new",
-  "description": "No description",
-  "slug": "expo-new",
+  "name": "Quoteum",
+  "description": "A feed realtime crypto and market quotes",
+  "slug": "Quoteum",
   "privacy": "public",
   "sdkVersion": "17.0.0",
   "version": "1.0.0",
   "orientation": "portrait",
   "primaryColor": "#cccccc",
   "icon": "./src/assets/icons/app-icon.png",
-  "entryPoint": "./src/main.js",
+  "entryPoint": "./src/index.native.js",
   "notification": {
     "icon": "./src/assets/icons/notification-icon.png",
     "color": "#000000"

@@ -1,21 +1,12 @@
 {
+  "presets": [
+    "babel-preset-expo"
+  ],
   "env": {
     "development": {
-      "presets": []
-    },
-    "production": {
-      "presets": []
-    },
-    "test": {
-      "presets": [
-        "es2015",
-        "stage-3"
+      "plugins": [
+        "transform-react-jsx-source"
       ]
     }
-  },
-  "plugins": [
-    "lodash",
-    "transform-flow-strip-types",
-    "transform-class-properties"
-  ]
+  }
 }
