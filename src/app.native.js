@@ -2,14 +2,28 @@ import Expo from 'expo';
 import React, { Component } from 'react';
 import HomeScreen from './screens/HomeScreen';
 
+import { base } from './rebase';
+
 export default class AppContainer extends Component {
   state = {
     appReady: false,
     error: false,
+    stream: {
+      'BTC-USD': {
+        last: '',
+      },
+      'ETH-USD': {
+        last: '',
+      },
+    },
   };
 
   componentWillMount() {
     this.loadAssets();
+    base.bindToState('stream', {
+      context: this,
+      state: 'stream',
+    });
   }
 
   async loadAssets() {
@@ -27,8 +41,18 @@ export default class AppContainer extends Component {
     }
   }
 
+  formatPrice = price => {
+    const formatted = parseFloat(price).toFixed(2);
+    return formatted === 'NaN' ? '' : formatted;
+  };
+
   render() {
-    const { appReady } = this.state;
-    return appReady ? <HomeScreen btc="2800" eth="260" /> : <Expo.AppLoading />;
+    const { appReady, stream } = this.state;
+    return appReady
+      ? <HomeScreen
+          btc={this.formatPrice(stream['BTC-USD'].last)}
+          eth={this.formatPrice(stream['ETH-USD'].last)}
+        />
+      : <Expo.AppLoading />;
   }
 }

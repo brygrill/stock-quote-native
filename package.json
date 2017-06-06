@@ -37,6 +37,7 @@
     "@expo/vector-icons": "^5.0.0",
     "expo": "17.0.0",
     "native-base": "^2.1.4",
+    "re-base": "^3.0.1",
     "react": "16.0.0-alpha.6",
     "react-dom": "16.0.0-alpha.6",
     "react-native": "https://github.com/expo/react-native/archive/sdk-17.0.0.tar.gz"

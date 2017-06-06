@@ -25,11 +25,7 @@ export default class HomeScreen extends Component {
     return (
       <Container>
         <Header>
-          <Left>
-            <Button transparent>
-              <Icon name="menu" />
-            </Button>
-          </Left>
+          <Left />
           <Body>
             <Title>Quoteum</Title>
           </Body>
