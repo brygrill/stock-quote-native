@@ -1,72 +1,34 @@
 import Expo from 'expo';
 import React, { Component } from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
-import { NavigationProvider, StackNavigation } from '@expo/ex-navigation';
-import { FontAwesome } from '@expo/vector-icons';
-
-import Router from './navigation/Router';
-import cacheAssetsAsync from './utilities/cacheAssetsAsync';
+import HomeScreen from './screens/HomeScreen';
 
 export default class AppContainer extends Component {
   state = {
-    appIsReady: false,
+    appReady: false,
+    error: false,
   };
 
   componentWillMount() {
-    this._loadAssetsAsync();
+    this.loadAssets();
   }
 
-  async _loadAssetsAsync() {
+  async loadAssets() {
     try {
-      await cacheAssetsAsync({
-        images: [require('./assets/images/expo-wordmark.png')],
-        fonts: [
-          FontAwesome.font,
-          { 'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf') },
-        ],
+      await Expo.Font.loadAsync({
+        Roboto: require('native-base/Fonts/Roboto.ttf'),
+        Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+        Ionicons: require('native-base/Fonts/Ionicons.ttf'),
       });
     } catch (e) {
-      console.warn(
-        'There was an error caching assets (see: main.js), perhaps due to a ' +
-          'network timeout, so we skipped caching. Reload the app to try again.',
-      );
-      console.log(e.message);
+      console.log(e);
+      this.setState({ error: true });
     } finally {
-      this.setState({ appIsReady: true });
+      this.setState({ appReady: true });
     }
   }
 
   render() {
-    if (this.state.appIsReady) {
-      return (
-        <View style={styles.container}>
-          <NavigationProvider router={Router}>
-            <StackNavigation
-              id="root"
-              initialRoute={Router.getRoute('rootNavigation')}
-            />
-          </NavigationProvider>
-
-          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-          {Platform.OS === 'android' &&
-            <View style={styles.statusBarUnderlay} />}
-        </View>
-      );
-    } else {
-      return <Expo.AppLoading />;
-    }
+    const { appReady } = this.state;
+    return appReady ? <HomeScreen btc="2800" eth="260" /> : <Expo.AppLoading />;
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  statusBarUnderlay: {
-    height: 24,
-    backgroundColor: 'rgba(0,0,0,0.2)',
-  },
-});
-
-//Expo.registerRootComponent(AppContainer);
