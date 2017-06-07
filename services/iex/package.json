@@ -1,0 +1,12 @@
+{
+  "name": "iex",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.16.1",
+    "firebase-admin": "^5.0.0",
+    "gdax": "^0.4.2",
+    "ws": "^3.0.0"
+  }
+}
