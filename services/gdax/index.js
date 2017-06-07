@@ -46,7 +46,8 @@ ws.on('open', function open() {
 ws.on('message', function incoming(data) {
   const parsed = JSON.parse(data);
   if (parsed.type === 'match') {
-    updateStream(parsed.product_id, parsed.price);
+    const priceToNum = parseFloat(parsed.price).toFixed(2);
+    updateStream(parsed.product_id, priceToNum);
   }
 });
 
