@@ -1,4 +1,3 @@
-//const Gdax = require('gdax');
 const admin = require('firebase-admin');
 const WebSocket = require('ws');
 
