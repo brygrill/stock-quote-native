@@ -19,16 +19,6 @@ const updateStream = (coin, last) => {
   ref.child(coin).set({ last });
 };
 
-// const websocket = new Gdax.WebsocketClient(['ETH-USD', 'BTC-USD']);
-// const gdaxSocket = () => {
-//   websocket.on('message', data => {
-//     if (data.type === 'match') {
-//       updateStream(data.product_id, data.price);
-//     }
-//   });
-// };
-
-// gdaxSocket();
 const pinger = () => {
   return setInterval(() => {
     ws.ping('keepalive');
@@ -36,13 +26,13 @@ const pinger = () => {
 };
 
 const elapsed = () => {
-  end = Date.now();
+  const end = Date.now();
   const elapsed = end - start;
   console.log('Ended:', end);
   console.log('Elapsed', elapsed);
 };
 
-query = {
+const query = {
   type: 'subscribe',
   product_ids: ['BTC-USD', 'ETH-USD'],
 };
