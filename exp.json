@@ -8,7 +8,7 @@
   "orientation": "portrait",
   "primaryColor": "#cccccc",
   "icon": "./src/assets/icons/app-icon.png",
-  "entryPoint": "./src/index.native.js",
+  "entryPoint": "./src/index.js",
   "notification": {
     "icon": "./src/assets/icons/notification-icon.png",
     "color": "#000000"

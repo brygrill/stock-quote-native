@@ -8,7 +8,7 @@
   "jest": {
     "preset": "jest-expo"
   },
-  "main": "./src/index.native.js",
+  "main": "./src/index.js",
   "devDependencies": {
     "babel-eslint": "^7.2.1",
     "babel-plugin-lodash": "^3.2.11",
@@ -32,20 +32,17 @@
     "react-test-renderer": "16.0.0-alpha.6"
   },
   "dependencies": {
-    "@expo/ex-navigation": "~3.0.0",
-    "@expo/samples": "~1.0.3",
     "@expo/vector-icons": "^5.0.0",
     "expo": "17.0.0",
     "native-base": "^2.1.4",
     "re-base": "^3.0.1",
     "react": "16.0.0-alpha.6",
-    "react-dom": "16.0.0-alpha.6",
     "react-native": "https://github.com/expo/react-native/archive/sdk-17.0.0.tar.gz"
   },
   "scripts": {
-    "start-web": "react-scripts start",
-    "build-web": "react-scripts build",
-    "test-web": "react-scripts test --env=jsdom",
-    "test-native": "node node_modules/jest/bin/jest.js"
+    "start": "exp start",
+    "sim": "exp ios",
+    "publish": "exp publish",
+    "test": "node node_modules/jest/bin/jest.js"
   }
 }

@@ -1,7 +1,4 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './app';
-import registerServiceWorker from './registerServiceWorker';
+import Expo from 'expo';
+import AppContainer from './app.js';
 
-ReactDOM.render(<App />, document.getElementById('root'));
-registerServiceWorker();
+Expo.registerRootComponent(AppContainer);
