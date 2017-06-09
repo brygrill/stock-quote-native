@@ -1,10 +1,12 @@
 // @flow
 import React, { Component } from 'react';
+import { StyleSheet } from 'react-native';
 import {
   Container,
   Header,
   Content,
   Body,
+  Title,
   Left,
   Right,
   Spinner,
@@ -15,7 +17,7 @@ import { base } from '../rebase';
 
 import StreamCard from '../components/StreamCard';
 
-const renderStream = streamArray => {
+const renderCards = streamArray => {
   return streamArray.map((item, index) => {
     const { key, last } = item;
     const title = key.slice(0, 3);
@@ -44,16 +46,31 @@ export default class HomeScreen extends Component {
   render() {
     const { loading } = this.state;
     return (
-      <Container>
-        <Header>
-          <Left />
-          <Body />
-          <Right />
+      <Container style={styles.container}>
+        <Header style={styles.header}>
+          <Body>
+            <Title style={styles.title}>RealTime Quotes</Title>
+          </Body>
         </Header>
-        <Content>
-          {loading ? <Spinner /> : renderStream(this.state.stream)}
+        <Content style={styles.content}>
+          {loading ? <Spinner /> : renderCards(this.state.stream)}
         </Content>
       </Container>
     );
   }
 }
+
+const styles = {
+  container: {
+    backgroundColor: '#263238',
+  },
+  header: {
+    backgroundColor: '#eceff1',
+  },
+  title: {
+    color: '#263238',
+  },
+  content: {
+    paddingTop: 5,
+  },
+};

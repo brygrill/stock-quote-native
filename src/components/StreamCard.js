@@ -11,7 +11,7 @@ export default class StreamCard extends Component {
   render() {
     const { title, price } = this.props;
     return (
-      <Card>
+      <Card style={styles.card}>
         <CardItem header>
           <Text>{title}</Text>
         </CardItem>
@@ -26,3 +26,11 @@ export default class StreamCard extends Component {
     );
   }
 }
+
+const styles = {
+  card: {
+    //backgroundColor: '#eceff1',
+    marginLeft: 10,
+    marginRight: 10,
+  },
+};
