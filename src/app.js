@@ -1,6 +1,8 @@
 import Expo from 'expo';
 import React, { Component } from 'react';
-import StreamScreen from './screens/StreamScreen';
+import { Ionicons } from '@expo/vector-icons';
+
+import NavContainer from './containers/NavContainer';
 
 export default class App extends Component {
   state = {
@@ -14,11 +16,7 @@ export default class App extends Component {
 
   async loadAssets() {
     try {
-      await Expo.Font.loadAsync({
-        Roboto: require('native-base/Fonts/Roboto.ttf'),
-        Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
-        Ionicons: require('native-base/Fonts/Ionicons.ttf'),
-      });
+      await Expo.Font.loadAsync(Ionicons.font);
     } catch (e) {
       console.log(e);
       this.setState({ error: true });
@@ -29,6 +27,6 @@ export default class App extends Component {
 
   render() {
     const { appReady } = this.state;
-    return appReady ? <StreamScreen /> : <Expo.AppLoading />;
+    return appReady ? <NavContainer /> : <Expo.AppLoading />;
   }
 }

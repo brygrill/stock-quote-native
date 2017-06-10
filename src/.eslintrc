@@ -5,6 +5,7 @@
     "plugin:flowtype/recommended",
     "prettier"
   ],
+  "root": true,
   "env": {
     "browser": true,
     "jest": true
