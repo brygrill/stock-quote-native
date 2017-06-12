@@ -97,14 +97,14 @@ const Tabs = TabNavigator(
       screen: RealtimeScreen,
       path: '',
     },
-    Data: {
-      screen: DataScreen,
-      path: 'data',
-    },
-    News: {
-      screen: NewsScreen,
-      path: 'news',
-    },
+    // Data: {
+    //   screen: DataScreen,
+    //   path: 'data',
+    // },
+    // News: {
+    //   screen: NewsScreen,
+    //   path: 'news',
+    // },
     About: {
       screen: AboutScreen,
       path: 'settings',

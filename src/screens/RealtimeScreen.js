@@ -1,29 +1,37 @@
 // @flow
 import React, { Component } from 'react';
-import { Text, StyleSheet, View } from 'react-native';
+import { FlatList, Text, StyleSheet } from 'react-native';
+import currencyFormatter from 'currency-formatter';
 // $FlowFixMe
 import { Constants } from 'expo';
 
-import currencyFormatter from 'currency-formatter';
+import AppContainer from '../containers/AppContainer';
+
 import { base } from '../rebase';
 
-/*import StreamCard from '../components/StreamCard';
-
-const renderCards = streamArray => {
-  return streamArray.map((item, index) => {
-    const { key, last } = item;
-    const title = key.slice(0, 3);
-    const price = currencyFormatter.format(last, { code: 'USD' });
-    return <StreamCard key={`${key}_${index}`} title={title} price={price} />;
-  });
-};*/
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: '#0d0d0d',
+  },
+  row: {
+    padding: 15,
+    marginBottom: 5,
+    backgroundColor: 'skyblue',
+  },
+  paragraph: {
+    margin: 24,
+    fontSize: 30,
+    fontWeight: '300',
+    textAlign: 'center',
+    color: '#f5f5f5',
+  },
+});
 
 export default class RealtimeScreen extends Component {
-  props: {
-    banner: string,
-    navigation: Object,
-  };
-
   state = {
     loading: true,
     error: false,
@@ -40,30 +48,33 @@ export default class RealtimeScreen extends Component {
     });
   }
 
+  keyExtractor = (item, index) => `${item.key}_${index}`;
+
+  props: {
+    banner: string,
+    navigation: Object,
+  };
+
+  renderItem = ({ item }) => {
+    const { key, last } = item;
+    const title = key.slice(0, 3);
+    const price = currencyFormatter.format(last, { code: 'USD' });
+    return (
+      <Text style={styles.row} key={key}>
+        {`${title}: ${price}`}
+      </Text>
+    );
+  };
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.paragraph}>
-          {this.props.banner}
-        </Text>
-      </View>
+      <AppContainer>
+        <FlatList
+          data={this.state.stream}
+          renderItem={this.renderItem}
+          keyExtractor={this.keyExtractor}
+        />
+      </AppContainer>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#0d0d0d',
-  },
-  paragraph: {
-    margin: 24,
-    fontSize: 30,
-    fontWeight: '300',
-    textAlign: 'center',
-    color: '#f5f5f5',
-  },
-});
