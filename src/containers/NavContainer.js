@@ -10,6 +10,27 @@ import { Ionicons } from '@expo/vector-icons';
 
 import Realtime from '../screens/RealtimeScreen';
 
+// Set status bar to white
+StatusBar.setBarStyle('light-content', true);
+
+// Set styles
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: '#0d0d0d',
+  },
+  paragraph: {
+    margin: 24,
+    fontSize: 30,
+    fontWeight: '300',
+    textAlign: 'center',
+    color: '#f5f5f5',
+  },
+});
+
 // Base components
 const ScreenContainer = (props: { banner: string }) =>
   <View style={styles.container}>
@@ -31,51 +52,41 @@ const RealtimeScreen = (props: { navigation: Object }) =>
 
 RealtimeScreen.navigationOptions = {
   tabBarLabel: 'Realtime',
-  tabBarIcon: ({ tintColor, focused }) =>
-    <NavIcon color={tintColor} icon="pulse" focused />,
+  tabBarIcon: (props: { tintColor: Object, focused: Boolean }) =>
+    <NavIcon color={props.tintColor} icon="pulse" focused={props.focused} />,
 };
 
 // Render Data Screen
-const DataScreen = ({ navigation }) =>
-  <ScreenContainer banner="Data Tab" navigation={navigation} />;
+const DataScreen = (props: { navigation: Object }) =>
+  <ScreenContainer banner="Data Tab" navigation={props.navigation} />;
 
 DataScreen.navigationOptions = {
   tabBarLabel: 'Data',
-  tabBarIcon: ({ tintColor, focused }) =>
-    <Ionicons
-      name={focused ? 'ios-stats' : 'ios-stats-outline'}
-      size={26}
-      style={{ color: tintColor }}
-    />,
+  tabBarIcon: (props: { tintColor: Object, focused: Boolean }) =>
+    <NavIcon color={props.tintColor} icon="stats" focused={props.focused} />,
 };
 
 // Render News Screen
-const NewsScreen = ({ navigation }) =>
-  <ScreenContainer banner="News Tab" navigation={navigation} />;
+const NewsScreen = (props: { navigation: Object }) =>
+  <ScreenContainer banner="News Tab" navigation={props.navigation} />;
 
 NewsScreen.navigationOptions = {
   tabBarLabel: 'News',
-  tabBarIcon: ({ tintColor, focused }) =>
-    <Ionicons
-      name={focused ? 'ios-paper' : 'ios-paper-outline'}
-      size={26}
-      style={{ color: tintColor }}
-    />,
+  tabBarIcon: (props: { tintColor: Object, focused: Boolean }) =>
+    <NavIcon color={props.tintColor} icon="paper" focused={props.focused} />,
 };
 
 // Render About Screen
-const AboutScreen = ({ navigation }) =>
-  <ScreenContainer banner="About Tab" navigation={navigation} />;
+const AboutScreen = (props: { navigation: Object }) =>
+  <ScreenContainer banner="About Tab" navigation={props.navigation} />;
 
 AboutScreen.navigationOptions = {
   tabBarLabel: 'About',
-  tabBarIcon: ({ tintColor, focused }) =>
-    <Ionicons
-      name={
-        focused ? 'ios-information-circle' : 'ios-information-circle-outline'
-      }
-      size={26}
-      style={{ color: tintColor }}
+  tabBarIcon: (props: { tintColor: Object, focused: Boolean }) =>
+    <NavIcon
+      color={props.tintColor}
+      icon="information-circle"
+      focused={props.focused}
     />,
 };
 
@@ -110,26 +121,5 @@ const Tabs = TabNavigator(
     },
   },
 );
-
-// Set status bar to white
-StatusBar.setBarStyle('light-content', true);
-
-// Set styles
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#0d0d0d',
-  },
-  paragraph: {
-    margin: 24,
-    fontSize: 30,
-    fontWeight: '300',
-    textAlign: 'center',
-    color: '#f5f5f5',
-  },
-});
 
 export default Tabs;
