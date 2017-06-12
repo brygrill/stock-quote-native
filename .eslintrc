@@ -1,6 +1,6 @@
 {
   "extends": [
-    "react-app",
+    "airbnb",
     "plugin:react/recommended",
     "plugin:flowtype/recommended",
     "prettier"
@@ -54,6 +54,8 @@
     ],
     "react/forbid-prop-types": "off",
     "arrow-parens": "off",
-    "react/prefer-stateless-function": "off"
+    "react/prefer-stateless-function": "off",
+    "react/jsx-wrap-multilines": "off",
+    "react/display-name": "off"
   }
 }
