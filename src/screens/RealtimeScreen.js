@@ -1,9 +1,7 @@
 // @flow
 import React, { Component } from 'react';
-import { FlatList, Text, StyleSheet } from 'react-native';
+import { FlatList, Text, StyleSheet, View } from 'react-native';
 import currencyFormatter from 'currency-formatter';
-// $FlowFixMe
-import { Constants } from 'expo';
 
 import AppContainer from '../containers/AppContainer';
 
@@ -11,16 +9,17 @@ import { base } from '../rebase';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#0d0d0d',
+    marginTop: 20,
   },
   row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'stretch',
     padding: 15,
-    marginBottom: 5,
-    backgroundColor: 'skyblue',
+    fontSize: 20,
+    fontWeight: '300',
+    color: '#f5f5f5',
+    borderBottomWidth: 0,
   },
   paragraph: {
     margin: 24,
@@ -61,8 +60,22 @@ export default class RealtimeScreen extends Component {
     const price = currencyFormatter.format(last, { code: 'USD' });
     return (
       <Text style={styles.row} key={key}>
-        {`${title}: ${price}`}
+        {`${title}:`}
+        {`${price}`}
       </Text>
+    );
+  };
+
+  renderSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          width: '90%',
+          backgroundColor: '#333',
+          marginHorizontal: '5%',
+        }}
+      />
     );
   };
 
@@ -70,9 +83,11 @@ export default class RealtimeScreen extends Component {
     return (
       <AppContainer>
         <FlatList
+          style={styles.container}
           data={this.state.stream}
           renderItem={this.renderItem}
           keyExtractor={this.keyExtractor}
+          ItemSeparatorComponent={this.renderSeparator}
         />
       </AppContainer>
     );
