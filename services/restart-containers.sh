@@ -1,5 +1,5 @@
 #!/bin/sh
 
-cd /usr/services
+cd /usr/docker-quoteum/services
 
 docker-compose restart

@@ -1,9 +1,9 @@
 gdax:
-    build: ./gdax
+    build: ./gdax-ws
     restart: always
-    container_name: GDAX
+    container_name: GDAX_WS
 
 iex:
-    build: ./iex
+    build: ./iex-ws
     restart: always
-    container_name: IEX
+    container_name: IEX_WS
