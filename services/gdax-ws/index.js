@@ -1,10 +1,10 @@
+/* eslint-disable prefer-arrow-callback */
+
 const admin = require('firebase-admin');
 const WebSocket = require('ws');
 
 const ws = new WebSocket('wss://ws-feed.gdax.com');
 const serviceAccount = require('./serviceAccountKey.json');
-
-let start = null;
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -15,20 +15,13 @@ const db = admin.database();
 const ref = db.ref('stream');
 
 const updateStream = (coin, last) => {
-  ref.child(coin).set({ last });
+  ref.child(coin).update({ last });
 };
 
 const pinger = () => {
   return setInterval(() => {
     ws.ping('keepalive');
   }, 30000);
-};
-
-const elapsed = () => {
-  const end = Date.now();
-  const elapsed = end - start;
-  console.log('Ended:', end);
-  console.log('Elapsed', elapsed);
 };
 
 const query = {
@@ -38,7 +31,7 @@ const query = {
 
 ws.on('open', function open() {
   ws.send(JSON.stringify(query));
-  start = Date.now();
+  const start = Date.now();
   console.log('Started: ', start);
   pinger();
 });
@@ -53,11 +46,9 @@ ws.on('message', function incoming(data) {
 
 ws.on('close', function close() {
   console.log('Disconnected');
-  elapsed();
   clearInterval(pinger);
 });
 
 ws.on('error', function error(err) {
-  elapsed();
   console.log('Error: ', err);
 });

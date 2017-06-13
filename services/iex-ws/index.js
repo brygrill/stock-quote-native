@@ -14,7 +14,7 @@ const db = admin.database();
 const ref = db.ref('stream');
 
 const updateStream = (ticker, last) => {
-  ref.child(ticker).set({ last });
+  ref.child(ticker).update({ last });
 };
 
 ir.onQuote(quote => {
