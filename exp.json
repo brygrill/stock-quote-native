@@ -6,16 +6,16 @@
   "sdkVersion": "17.0.0",
   "version": "0.1.0",
   "orientation": "portrait",
-  "primaryColor": "#263238",
-  "icon": "./src/assets/icons/quoteum_icon_512.png",
+  "primaryColor": "#0d0d0d",
+  "icon": "./src/assets/icons/logo_lightgray_darkback_rounded_512.png",
   "entryPoint": "./src/index.js",
   "notification": {
-    "icon": "./src/assets/icons/notification-icon.png",
-    "color": "#000000"
+    "icon": "./src/assets/icons/logo_lightgray_cropped_100.png",
+    "color": "#0d0d0d"
   },
   "loading": {
-    "icon": "./src/assets/icons/quoteum_icon_512.png",
-    "backgroundColor": "#263238",
+    "icon": "./src/assets/icons/logo_lightgray_cropped.png",
+    "backgroundColor": "#0d0d0d",
     "hideExponentText": true
   },
   "packagerOpts": {

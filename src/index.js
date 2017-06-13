@@ -1,4 +1,4 @@
 import Expo from 'expo';
-import AppContainer from './app.js';
+import AppContainer from './app';
 
 Expo.registerRootComponent(AppContainer);
