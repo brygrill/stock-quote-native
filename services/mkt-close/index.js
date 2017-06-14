@@ -68,8 +68,8 @@ const fetchClose = identifier => {
     .get('/prices', {
       params: {
         identifier,
-        start_date: '2017-06-13',
-        end_date: '2017-06-13',
+        start_date: getYesterday(),
+        end_date: getYesterday(),
       },
     })
     .then(data => {
@@ -99,7 +99,6 @@ const fetchAllClose = () => {
 const job = new CronJob({
   cronTime: '00 00 07 * * 1-5',
   onTick: fetchAllClose(),
-  onComplete: sms('Closing prices updated!'),
   timeZone,
 });
 
