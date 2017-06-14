@@ -56,13 +56,17 @@ export default class RealtimeScreen extends Component {
 
   renderItem = ({ item }) => {
     const { key, last } = item;
-    const title = key.slice(0, 3);
+    const symbol = key.slice(0, 3);
     const price = currencyFormatter.format(last, { code: 'USD' });
     return (
-      <Text style={styles.row} key={key}>
-        {`${title}:`}
-        {`${price}`}
-      </Text>
+      <View>
+        <Text style={styles.row} key={key}>
+          {symbol}
+        </Text>
+        <Text>
+          {price}
+        </Text>
+      </View>
     );
   };
 
