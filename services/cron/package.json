@@ -1,0 +1,13 @@
+{
+  "name": "iex",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.16.2",
+    "cron": "^1.2.1",
+    "firebase-admin": "^5.0.0",
+    "moment-timezone": "^0.5.13",
+    "twilio": "^3.3.0"
+  }
+}

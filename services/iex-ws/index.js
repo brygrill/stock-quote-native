@@ -46,4 +46,4 @@ ir.onError(err => {
   sms('Error in Intrinio websocket service!');
 });
 
-ir.join('QQQ', 'SPY', 'IWM', 'EFA', 'EEM', 'TLT', 'AGG', 'VXX', 'GLD');
+ir.join('QQQ', 'SPY', 'IWM', 'EFA', 'EEM', 'TLT', 'AGG', 'VXX');
