@@ -1,6 +1,9 @@
 // @flow
 import React, { Component } from 'react';
 import { FlatList, Text, StyleSheet, View } from 'react-native';
+import { ListItem } from 'react-native-elements';
+import { Entypo } from '@expo/vector-icons';
+
 import currencyFormatter from 'currency-formatter';
 
 import AppContainer from '../containers/AppContainer';
@@ -30,6 +33,17 @@ const styles = StyleSheet.create({
   },
 });
 
+const formatUSD = amount => {
+  return currencyFormatter.format(amount, { code: 'USD' });
+};
+
+const formatChange = (close, price) => {
+  let change = (price - close) / close;
+  change *= 100;
+  change = change.toFixed(3);
+  return `${change}%`;
+};
+
 export default class RealtimeScreen extends Component {
   state = {
     loading: true,
@@ -55,30 +69,16 @@ export default class RealtimeScreen extends Component {
   };
 
   renderItem = ({ item }) => {
-    const { key, last } = item;
+    const { key, last, close } = item;
     const symbol = key.slice(0, 3);
-    const price = currencyFormatter.format(last, { code: 'USD' });
+    const price = formatUSD(last);
+    const change = close ? formatChange(close, last) : '0.00%';
     return (
-      <View>
-        <Text style={styles.row} key={key}>
-          {symbol}
-        </Text>
-        <Text>
-          {price}
-        </Text>
-      </View>
-    );
-  };
-
-  renderSeparator = () => {
-    return (
-      <View
-        style={{
-          height: 1,
-          width: '90%',
-          backgroundColor: '#333',
-          marginHorizontal: '5%',
-        }}
+      <ListItem
+        title={symbol}
+        rightTitle={`${price}  ${change}`}
+        leftIcon={<Entypo name="dot-single" size={32} color="#43a047" />}
+        hideChevron
       />
     );
   };
@@ -91,7 +91,6 @@ export default class RealtimeScreen extends Component {
           data={this.state.stream}
           renderItem={this.renderItem}
           keyExtractor={this.keyExtractor}
-          ItemSeparatorComponent={this.renderSeparator}
         />
       </AppContainer>
     );
