@@ -12,3 +12,8 @@ mktclose:
     build: ./mkt-close
     restart: always
     container_name: MKT_CLOSE
+
+cryptoclose:
+    build: ./crypto-close
+    restart: always
+    container_name: CRYPTO_CLOSE
