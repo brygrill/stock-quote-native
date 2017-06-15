@@ -58,16 +58,16 @@ ws.on('open', function open() {
 ws.on('message', function incoming(data) {
   const parsed = JSON.parse(data);
   if (parsed.type === 'match') {
-    const { price, time } = parsed;
-    const priceToNum = parseFloat(price).toFixed(2);
+    const { price, time, product_id } = parsed;
+    const priceToNum = Number(parseFloat(price).toFixed(2));
     const updatedAt = moment(time).tz(timeZone).format();
-    updateStream(parsed.product_id, Number(priceToNum), updatedAt);
+    updateStream(product_id, priceToNum, updatedAt);
   }
 });
 
 ws.on('close', function close() {
   clearInterval(pinger);
-  sms('GDAX websocket service disconnected!');
+  sms('GDAX websocket service has been closed!');
 });
 
 ws.on('error', function error(err) {
