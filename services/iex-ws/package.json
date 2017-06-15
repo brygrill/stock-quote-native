@@ -6,6 +6,7 @@
   "dependencies": {
     "firebase-admin": "^5.0.0",
     "intrinio-realtime": "^1.0.1",
+    "moment-timezone": "^0.5.13",
     "twilio": "^3.3.0"
   }
 }

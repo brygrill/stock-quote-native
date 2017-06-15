@@ -1,9 +1,13 @@
 const admin = require('firebase-admin');
 const IntrinioRealtime = require('intrinio-realtime');
 const twilio = require('twilio');
+const moment = require('moment-timezone');
 
 const serviceAccount = require('./serviceAccountKey.json');
 const secrets = require('./secrets');
+
+// set timezone
+const timeZone = 'America/New_York';
 
 // Init Twilio
 const { accountSID, authToken, from, to } = secrets.twilio;
@@ -36,7 +40,7 @@ const sms = body => {
 ir.onQuote(quote => {
   const { type, ticker, price, timestamp } = quote;
   if (type === 'last') {
-    const updatedAt = new Date(timestamp * 1000).toISOString();
+    const updatedAt = moment(timestamp * 1000).tz(timeZone).format();
     updateStream(ticker, price, updatedAt);
   }
 });

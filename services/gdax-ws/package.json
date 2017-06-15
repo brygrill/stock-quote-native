@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "firebase-admin": "^5.0.0",
+    "moment-timezone": "^0.5.13",
     "twilio": "^3.3.0",
     "ws": "^3.0.0"
   }

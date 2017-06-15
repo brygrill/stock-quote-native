@@ -1,11 +1,14 @@
 /* eslint-disable prefer-arrow-callback */
-
 const admin = require('firebase-admin');
 const WebSocket = require('ws');
 const twilio = require('twilio');
+const moment = require('moment-timezone');
 
 const serviceAccount = require('./serviceAccountKey.json');
 const secrets = require('./secrets');
+
+// set timezone
+const timeZone = 'America/New_York';
 
 // Init Twilio
 const { accountSID, authToken, from, to } = secrets.twilio;
@@ -57,7 +60,8 @@ ws.on('message', function incoming(data) {
   if (parsed.type === 'match') {
     const { price, time } = parsed;
     const priceToNum = parseFloat(price).toFixed(2);
-    updateStream(parsed.product_id, Number(priceToNum), time);
+    const updatedAt = moment(time).tz(timeZone).format();
+    updateStream(parsed.product_id, Number(priceToNum), updatedAt);
   }
 });
 

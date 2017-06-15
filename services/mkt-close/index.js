@@ -30,8 +30,8 @@ const instance = axios.create({
 });
 
 // update firebase
-const updateStream = (ticker, close) => {
-  ref.child(ticker).update({ close });
+const updateStream = (ticker, close, closeUpdateAt) => {
+  ref.child(ticker).update({ close, closeUpdateAt });
 };
 
 // send text
@@ -85,7 +85,8 @@ const fetchAllClose = () => {
   securities.map(item => {
     return fetchClose(item)
       .then(close => {
-        updateStream(item, close);
+        const closeUpdateAt = moment().tz(timeZone).format();
+        updateStream(item, close, closeUpdateAt);
       })
       .catch(err => {
         console.log('Error: ', err); // eslint-disable-line
@@ -100,6 +101,7 @@ const job = new CronJob({
   cronTime: '00 00 07 * * 1-5',
   onTick: fetchAllClose(),
   timeZone,
+  runOnInit: false,
 });
 
 job.start();
