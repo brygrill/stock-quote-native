@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import { FlatList, Text, StyleSheet, View } from 'react-native';
+import { SectionList, Text, StyleSheet } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { Entypo } from '@expo/vector-icons';
 
@@ -24,12 +24,11 @@ const styles = StyleSheet.create({
     color: '#f5f5f5',
     borderBottomWidth: 0,
   },
-  paragraph: {
-    margin: 24,
-    fontSize: 30,
-    fontWeight: '300',
-    textAlign: 'center',
-    color: '#f5f5f5',
+  header: {
+    marginTop: 15,
+    marginLeft: 10,
+    fontSize: 24,
+    color: '#404040',
   },
 });
 
@@ -40,7 +39,8 @@ const formatUSD = amount => {
 const formatChange = (close, price) => {
   let change = (price - close) / close;
   change *= 100;
-  change = change.toFixed(3);
+  change = Math.round(change * 100) / 100;
+  change = change.toFixed(2);
   return `${change}%`;
 };
 
@@ -58,6 +58,9 @@ export default class RealtimeScreen extends Component {
       state: 'stream',
       then: this.setState({ loading: false }),
       onFailure: this.setState({ error: true }),
+      queries: {
+        orderByKey: 'asc',
+      },
     });
   }
 
@@ -68,6 +71,35 @@ export default class RealtimeScreen extends Component {
     navigation: Object,
   };
 
+  sectionsArr = data => {
+    const sections = [
+      { key: 0, title: 'Digital Assets', data: [] },
+      { key: 1, title: 'US Markets', data: [] },
+      { key: 2, title: 'Global Markets', data: [] },
+      { key: 3, title: 'Risk Off', data: [] },
+    ];
+
+    data.map(item => {
+      switch (item.category) {
+        case 'Digital Assets':
+          sections[0].data.push(item);
+          break;
+        case 'US Markets':
+          sections[1].data.push(item);
+          break;
+        case 'Global Markets':
+          sections[2].data.push(item);
+          break;
+        case 'Risk Off':
+          sections[3].data.push(item);
+          break;
+        default:
+          break;
+      }
+    });
+    return sections;
+  };
+
   renderItem = ({ item }) => {
     const { key, last, close } = item;
     const symbol = key.slice(0, 3);
@@ -76,20 +108,29 @@ export default class RealtimeScreen extends Component {
     return (
       <ListItem
         title={symbol}
-        rightTitle={`${price}  ${change}`}
+        rightTitle={`${price}    ${change}`}
         leftIcon={<Entypo name="dot-single" size={32} color="#43a047" />}
         hideChevron
       />
     );
   };
 
+  renderSectionHeader = ({ section }) => {
+    return (
+      <Text style={styles.header}>
+        {section.title}
+      </Text>
+    );
+  };
+
   render() {
     return (
       <AppContainer>
-        <FlatList
+        <SectionList
           style={styles.container}
-          data={this.state.stream}
+          sections={this.sectionsArr(this.state.stream)}
           renderItem={this.renderItem}
+          renderSectionHeader={this.renderSectionHeader}
           keyExtractor={this.keyExtractor}
         />
       </AppContainer>
