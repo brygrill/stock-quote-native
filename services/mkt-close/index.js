@@ -21,7 +21,7 @@ admin.initializeApp({
 });
 
 const db = admin.database();
-const ref = db.ref('stream');
+const ref = db.ref('realtime/securities');
 
 // Init Axios
 const instance = axios.create({
@@ -31,7 +31,13 @@ const instance = axios.create({
 
 // update firebase
 const updateStream = (ticker, close, closeUpdateAt) => {
-  ref.child(ticker).update({ close, closeUpdateAt });
+  const target = ticker.toLowerCase();
+  ref.child(target).update({
+    last: close,
+    lastUpdatedAt: closeUpdateAt,
+    close,
+    closeUpdateAt,
+  });
 };
 
 // send text
@@ -99,9 +105,11 @@ const fetchAllClose = () => {
 // every weekday at 7am
 const job = new CronJob({
   cronTime: '00 00 07 * * 1-5',
-  onTick: fetchAllClose(),
+  onTick() {
+    return fetchAllClose();
+  },
+  start: false,
   timeZone,
-  runOnInit: false,
 });
 
 job.start();

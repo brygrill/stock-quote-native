@@ -30,7 +30,7 @@ const instance = axios.create({
 
 // update firebase
 const updateStream = (coin, close, closeUpdateAt) => {
-  target = coin.slice(0, 3).toLowerCase();
+  const target = coin.slice(0, 3).toLowerCase();
   ref.child(target).update({ close, closeUpdateAt });
 };
 
@@ -76,9 +76,9 @@ const fetchAllClose = () => {
 // set cron job to run
 // everyday at 12:00 EST
 const job = new cron.CronJob({
-  cronTime: '* * * * *',
-  onTick: function() {
-    fetchAllClose();
+  cronTime: '00 00 00 * * *',
+  onTick() {
+    return fetchAllClose();
   },
   start: false,
   timeZone,
