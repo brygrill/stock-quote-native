@@ -23,10 +23,11 @@ admin.initializeApp({
 });
 
 const db = admin.database();
-const ref = db.ref('stream');
+const ref = db.ref('realtime/securities');
 
-const updateStream = (ticker, last, updatedAt) => {
-  ref.child(ticker).update({ last, updatedAt });
+const updateStream = (ticker, last, lastUpdatedAt) => {
+  target = ticker.toLowerCase();
+  ref.child(target).update({ last, lastUpdatedAt });
 };
 
 const sms = body => {
@@ -40,8 +41,8 @@ const sms = body => {
 ir.onQuote(quote => {
   const { type, ticker, price, timestamp } = quote;
   if (type === 'last') {
-    const updatedAt = moment(timestamp * 1000).tz(timeZone).format();
-    updateStream(ticker, price, updatedAt);
+    const lastUpdatedAt = moment(timestamp * 1000).tz(timeZone).format();
+    updateStream(ticker, price, lastUpdatedAt);
   }
 });
 
