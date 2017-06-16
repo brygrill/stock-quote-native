@@ -2,4 +2,6 @@
 
 cd /usr/docker-quoteum/services
 
-docker-compose restart
+docker-compose restart gdax
+
+docker-compose restart iex
