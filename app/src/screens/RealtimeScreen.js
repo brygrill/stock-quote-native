@@ -1,7 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import { SectionList, Text, StyleSheet } from 'react-native';
-import { ListItem } from 'react-native-elements';
+import { SectionList, Text, View, StyleSheet } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 
 import currencyFormatter from 'currency-formatter';
@@ -13,22 +12,40 @@ import { base } from '../rebase';
 const styles = StyleSheet.create({
   container: {
     marginTop: 20,
+    flex: 1,
+  },
+  test: {
+    color: '#fff',
+  },
+  header: {
+    padding: 15,
+    marginBottom: 5,
+    backgroundColor: '#262626',
+    color: '#f5f5f5',
+    fontWeight: 'bold',
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'stretch',
-    padding: 15,
-    fontSize: 20,
-    fontWeight: '300',
-    color: '#f5f5f5',
-    borderBottomWidth: 0,
   },
-  header: {
-    marginTop: 15,
-    marginLeft: 10,
-    fontSize: 24,
-    color: '#404040',
+  rowTitle: {
+    color: '#f5f5f5',
+    margin: 10,
+  },
+  rowStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+  },
+  rowStatsPrice: {
+    color: '#f5f5f5',
+    margin: 10,
+  },
+  rowStatsChange: {
+    color: '#f5f5f5',
+    margin: 10,
+    minWidth: 50,
   },
 });
 
@@ -41,7 +58,7 @@ const formatChange = (close, price) => {
   change *= 100;
   change = Math.round(change * 100) / 100;
   change = change.toFixed(2);
-  return `${change}%`;
+  return change > 0 ? `+${change}%` : `${change}%`;
 };
 
 export default class RealtimeScreen extends Component {
@@ -106,12 +123,13 @@ export default class RealtimeScreen extends Component {
     const price = formatUSD(last);
     const change = close ? formatChange(close, last) : '0.00%';
     return (
-      <ListItem
-        title={symbol}
-        rightTitle={`${price}    ${change}`}
-        leftIcon={<Entypo name="dot-single" size={32} color="#43a047" />}
-        hideChevron
-      />
+      <View style={styles.row}>
+        <Text style={styles.rowTitle}>{symbol}</Text>
+        <View style={styles.rowStats}>
+          <Text style={styles.rowStatsPrice}>{price}</Text>
+          <Text style={styles.rowStatsChange}>{change}</Text>
+        </View>
+      </View>
     );
   };
 
@@ -128,6 +146,8 @@ export default class RealtimeScreen extends Component {
       <AppContainer>
         <SectionList
           style={styles.container}
+          refreshing={this.state.loading}
+          stickySectionHeadersEnabled={false}
           sections={this.sectionsArr(this.state.stream)}
           renderItem={this.renderItem}
           renderSectionHeader={this.renderSectionHeader}
