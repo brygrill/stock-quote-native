@@ -3,6 +3,11 @@ gdax:
     restart: always
     container_name: GDAX_WS
 
+coincap:
+    build: ./coincap-ws
+    restart: always
+    container_name: COINCAP_WS
+
 iex:
     build: ./iex-ws
     restart: always
