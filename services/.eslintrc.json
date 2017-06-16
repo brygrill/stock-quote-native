@@ -1,0 +1,7 @@
+{
+  "extends": "airbnb",
+  "root": true,
+  "plugins": [
+    "react"
+  ]
+}

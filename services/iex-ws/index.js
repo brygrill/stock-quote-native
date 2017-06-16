@@ -26,7 +26,7 @@ const db = admin.database();
 const ref = db.ref('realtime/securities');
 
 const updateStream = (ticker, last, lastUpdatedAt) => {
-  target = ticker.toLowerCase();
+  const target = ticker.toLowerCase();
   ref.child(target).update({ last, lastUpdatedAt });
 };
 

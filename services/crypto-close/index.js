@@ -2,7 +2,7 @@ const admin = require('firebase-admin');
 const axios = require('axios');
 const twilio = require('twilio');
 const moment = require('moment-timezone');
-const CronJob = require('cron').CronJob;
+const cron = require('cron');
 
 const serviceAccount = require('./serviceAccountKey.json');
 const secrets = require('./secrets');
@@ -21,7 +21,7 @@ admin.initializeApp({
 });
 
 const db = admin.database();
-const ref = db.ref('stream');
+const ref = db.ref('realtime/coins/gdax');
 
 // Init Axios
 const instance = axios.create({
@@ -30,7 +30,8 @@ const instance = axios.create({
 
 // update firebase
 const updateStream = (coin, close, closeUpdateAt) => {
-  ref.child(coin).update({ close, closeUpdateAt });
+  target = coin.slice(0, 3).toLowerCase();
+  ref.child(target).update({ close, closeUpdateAt });
 };
 
 // send text
@@ -74,11 +75,13 @@ const fetchAllClose = () => {
 
 // set cron job to run
 // everyday at 12:00 EST
-const job = new CronJob({
-  cronTime: '00 00 00 * * *',
-  onTick: fetchAllClose(),
+const job = new cron.CronJob({
+  cronTime: '* * * * *',
+  onTick: function() {
+    fetchAllClose();
+  },
+  start: false,
   timeZone,
-  runOnInit: false,
 });
 
 job.start();

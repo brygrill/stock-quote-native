@@ -27,7 +27,7 @@ const db = admin.database();
 const ref = db.ref('realtime/coins/gdax');
 
 const updateStream = (coin, last, lastUpdatedAt) => {
-  target = coin.slice(0, 3).toLowerCase();
+  const target = coin.slice(0, 3).toLowerCase();
   ref.child(target).update({ last, lastUpdatedAt });
 };
 
