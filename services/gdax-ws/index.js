@@ -24,10 +24,11 @@ admin.initializeApp({
 });
 
 const db = admin.database();
-const ref = db.ref('stream');
+const ref = db.ref('realtime/coins/gdax');
 
-const updateStream = (coin, last, updatedAt) => {
-  ref.child(coin).update({ last, updatedAt });
+const updateStream = (coin, last, lastUpdatedAt) => {
+  target = coin.slice(0, 3).toLowerCase();
+  ref.child(target).update({ last, lastUpdatedAt });
 };
 
 const pinger = () => {
@@ -60,8 +61,8 @@ ws.on('message', function incoming(data) {
   if (parsed.type === 'match') {
     const { price, time, product_id } = parsed;
     const priceToNum = Number(parseFloat(price).toFixed(2));
-    const updatedAt = moment(time).tz(timeZone).format();
-    updateStream(product_id, priceToNum, updatedAt);
+    const lastUpdatedAt = moment(time).tz(timeZone).format();
+    updateStream(product_id, priceToNum, lastUpdatedAt);
   }
 });
 
