@@ -60,6 +60,7 @@ socket.on('error', err => {
 
 socket.on('trades', trade => {
   const { message } = trade;
+  console.log(message);
   if (coins.includes(message.coin)) {
     const { time, short, cap24hrChange, price, volume } = message.msg;
     const perc24 = numeral(cap24hrChange / 100).format('0.00%');
