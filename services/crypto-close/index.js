@@ -3,6 +3,7 @@ const axios = require('axios');
 const twilio = require('twilio');
 const moment = require('moment-timezone');
 const cron = require('cron');
+const find = require('lodash.find');
 
 const serviceAccount = require('./serviceAccountKey.json');
 const secrets = require('./secrets');
@@ -21,17 +22,17 @@ admin.initializeApp({
 });
 
 const db = admin.database();
-const ref = db.ref('realtime/coins/gdax');
+const ref = db.ref('realtime/coins');
 
 // Init Axios
-const instance = axios.create({
+const instanceGdax = axios.create({
   baseURL: 'https://api.gdax.com',
 });
 
 // update firebase
-const updateStream = (coin, close, closeUpdateAt) => {
+const updateStream = (exch, coin, close, closeUpdateAt) => {
   const target = coin.slice(0, 3).toLowerCase();
-  ref.child(target).update({ close, closeUpdateAt });
+  ref.child(`${exch}/${target}`).update({ close, closeUpdateAt });
 };
 
 // send text
@@ -43,11 +44,11 @@ const sms = body => {
   });
 };
 
-// fetch close data
-const coins = ['BTC-USD', 'ETH-USD'];
+// fetch GDAX close data
+const coinsGdax = ['BTC-USD', 'ETH-USD', 'LTC-USD'];
 
-const fetchClose = coin => {
-  return instance
+const fetchCloseGdax = coin => {
+  return instanceGdax
     .get(`/products/${coin}/ticker`, {})
     .then(data => {
       return data.data;
@@ -57,14 +58,14 @@ const fetchClose = coin => {
     });
 };
 
-const fetchAllClose = () => {
-  coins.map(item => {
-    return fetchClose(item)
+const fetchAllCloseGdax = () => {
+  coinsGdax.map(item => {
+    return fetchCloseGdax(item)
       .then(data => {
         const { price, time } = data;
         const priceToNum = Number(parseFloat(price).toFixed(2));
         const closeUpdateAt = moment(time).tz(timeZone).format();
-        updateStream(item, priceToNum, closeUpdateAt);
+        updateStream('gdax', item, priceToNum, closeUpdateAt);
       })
       .catch(err => {
         console.log('Error: ', err); // eslint-disable-line
@@ -73,12 +74,46 @@ const fetchAllClose = () => {
   });
 };
 
+// Fetch CoinCap Close Data
+const coinsCoinCap = ['BTC', 'ETH', 'LTC'];
+
+const fetchCloseCoinCap = () => {
+  return axios
+    .get('http://www.coincap.io/front', {})
+    .then(data => {
+      return data.data;
+    })
+    .catch(err => {
+      return err;
+    });
+};
+
+const fetchAllCloseCoinCap = () => {
+  return fetchCloseCoinCap()
+    .then(data => {
+      coinsCoinCap.map(item => {
+        const coinRecord = find(data, coin => {
+          return coin.short === item;
+        });
+        const { price, time } = coinRecord;
+        const priceToNum = Number(parseFloat(price).toFixed(2));
+        const closeUpdateAt = moment(time).tz(timeZone).format();
+        updateStream('coincap', item, priceToNum, closeUpdateAt);
+      });
+    })
+    .catch(err => {
+      console.log('Error: ', err); // eslint-disable-line
+      sms('Error fetching closing price for CoinCap!');
+    });
+};
+
 // set cron job to run
 // everyday at 12:00 EST
 const job = new cron.CronJob({
   cronTime: '00 00 00 * * *',
   onTick() {
-    return fetchAllClose();
+    fetchAllCloseGdax();
+    fetchAllCloseCoinCap();
   },
   start: false,
   timeZone,

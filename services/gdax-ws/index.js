@@ -98,8 +98,6 @@ ws.on('message', function incoming(data) {
   if (parsed.type === 'match') {
     const { price, time, product_id } = parsed;
     const { change, status } = calcDayChange(product_id, price);
-    console.log(calcDayChange(product_id, price));
-    //const priceToNum = Number(parseFloat(price).toFixed(2));
     const last = numeral(price).format('$0,0.00');
     const lastUpdatedAt = moment(time).tz(timeZone).format();
     updateStream(product_id, last, lastUpdatedAt, change, status);
@@ -108,7 +106,7 @@ ws.on('message', function incoming(data) {
 
 ws.on('close', function close() {
   clearInterval(pinger);
-  sms('GDAX websocket service has been closed!');
+  sms('GDAX websocket service has been disconnected!');
 });
 
 ws.on('error', function error(err) {
