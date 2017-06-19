@@ -31,6 +31,7 @@ const ref = db.ref('realtime/coins/gdax');
 const formatCoin = coin => {
   return coin.slice(0, 3).toLowerCase();
 };
+
 // write updates
 const updateStream = (coin, last, lastUpdatedAt, percDay, statusDay) => {
   ref

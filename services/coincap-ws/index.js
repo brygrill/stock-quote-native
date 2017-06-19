@@ -29,9 +29,53 @@ admin.initializeApp({
 const db = admin.database();
 const ref = db.ref('realtime/coins/coincap');
 
-const updateStream = (coin, last, lastUpdatedAt, perc24, volume) => {
-  const target = coin.toLowerCase();
-  ref.child(target).update({ last, lastUpdatedAt, perc24, volume });
+// format coin
+const formatCoin = coin => {
+  return coin.slice(0, 3).toLowerCase();
+};
+
+// write updates
+const updateStream = (
+  coin,
+  last,
+  lastUpdatedAt,
+  perc24,
+  volume,
+  percDay,
+  statusDay) => {
+  ref
+    .child(formatCoin(coin))
+    .update({ last, lastUpdatedAt, perc24, volume, percDay, statusDay });
+};
+
+// read for close data
+let coinCapState = null;
+const readClose = () => {
+  ref.on('value', snapshot => {
+    coinCapState = snapshot.val();
+  });
+};
+
+// set change status
+const setDayStatus = (close, last) => {
+  let status = null;
+  if (last > close) {
+    status = 'UP';
+  } else if (last < close) {
+    status = 'DOWN';
+  } else if (last === close) {
+    status = 'UNCH';
+  }
+  return status;
+};
+
+// calc change
+const calcDayChange = (productID, last) => {
+  const coin = formatCoin(productID);
+  const close = coinCapState ? coinCapState[coin].close : null;
+  const change = close ? numeral((last - close) / close).format('0.00%') : null;
+  const status = close ? setDayStatus(close, last) : null;
+  return { change, status };
 };
 
 const sms = body => {
@@ -60,13 +104,16 @@ socket.on('error', err => {
 
 socket.on('trades', trade => {
   const { message } = trade;
-  console.log(message);
   if (coins.includes(message.coin)) {
     const { time, short, cap24hrChange, price, volume } = message.msg;
+    const { change, status } = calcDayChange(short, price);
     const perc24 = numeral(cap24hrChange / 100).format('0.00%');
     const last = numeral(price).format('$0,0.00');
     const vol = numeral(volume).format('0,0');
     const lastUpdatedAt = moment(time).tz(timeZone).format();
-    updateStream(short, last, lastUpdatedAt, perc24, vol);
+    updateStream(short, last, lastUpdatedAt, perc24, vol, change, status);
   }
 });
+
+// connect to read data
+readClose();
