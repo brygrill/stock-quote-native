@@ -93,8 +93,7 @@ socket.on('connect', () => {
 });
 
 socket.on('disconnect', err => {
-  console.log('Error: ', err);
-  sms('CoinCap websocket service has been disconnected!');
+  console.log('Disconnected: ', err);
 });
 
 socket.on('error', err => {

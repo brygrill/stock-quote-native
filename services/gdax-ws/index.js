@@ -107,7 +107,6 @@ ws.on('message', function incoming(data) {
 
 ws.on('close', function close() {
   clearInterval(pinger);
-  sms('GDAX websocket service has been disconnected!');
 });
 
 ws.on('error', function error(err) {
