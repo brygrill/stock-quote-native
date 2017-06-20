@@ -12,9 +12,6 @@ config.json
 serviceAccountKey.json
 secrets.js
 
-# Local scripts
-scripts
-
 # Logs
 logs
 *.log
