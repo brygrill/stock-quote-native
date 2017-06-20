@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "scp": "zsh ./scripts/rm-node-modules.sh && zsh ./scripts/cp-services.sh"
   },
   "author": "",
   "license": "MIT",
