@@ -1,4 +1,4 @@
-#!/bin/bash
-cd ../services
+#!/bin/zsh
+cd ..
 
-find . -name a -type d -exec rm -rf {} \;
+find services -name node_modules -type d -exec rm -rf "{}" \; || true
