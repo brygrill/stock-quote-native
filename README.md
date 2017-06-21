@@ -1,4 +1,8 @@
-# Quoteum
+<div align="center">
+  <h2>Quoteum</h2>
+  <img src="/app/src/assets/icons/logo_lightgray_darkback_rounded_512.png">
+</div>
+
 :money_with_wings: React Native + Firebase + Docker app for real-time crypto and market quotes
 
 ### Crypto data:
