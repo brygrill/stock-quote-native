@@ -2,7 +2,7 @@
   "name": "Quoteum",
   "description": "realtime crypto and market quotes",
   "slug": "Quoteum",
-  "privacy": "unlisted",
+  "privacy": "public",
   "sdkVersion": "17.0.0",
   "version": "0.1.0",
   "orientation": "portrait",
