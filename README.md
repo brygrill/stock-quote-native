@@ -1,7 +1,7 @@
 <div align="center">
   <h1>Quoteum</h1>
   <p>:money_with_wings: React Native + Firebase + Docker app for real-time crypto and market quotes</p>
-  <img src="/app/src/assets/icons/logo_lightgray_darkback_rounded_512.png" alt="Quoteum Logo" style="width: 200px;">
+  <img src="/app/src/assets/icons/logo_lightgray_darkback_rounded_512.png" alt="Quoteum Logo" height="200" width="200"/>
 </div>
  
  ---
