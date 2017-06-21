@@ -31,13 +31,15 @@ const instance = axios.create({
 });
 
 // update firebase
-const updateStream = (ticker, last, close, closeUpdateAt) => {
+const updateStream = (ticker, last, close, closeUpdateAt, percDay, statusDay) => {
   const target = ticker.toLowerCase();
   ref.child(target).update({
     last,
     lastUpdatedAt: closeUpdateAt,
     close,
     closeUpdateAt,
+    percDay,
+    statusDay,
   });
 };
 
@@ -92,9 +94,10 @@ const fetchAllClose = () => {
   securities.map(item => {
     return fetchClose(item)
       .then(close => {
-        const closeFormatted = numeral(close).format('$0,0.00');
+        const closeToNum = Number(parseFloat(close).toFixed(2));
+        const last = numeral(close).format('$0,0.00');
         const closeUpdateAt = moment().tz(timeZone).format();
-        updateStream(item, close, closeFormatted, closeUpdateAt);
+        updateStream(item, last, closeToNum, closeUpdateAt, '0.00%', 'UNCH');
       })
       .catch(err => {
         console.log('Error: ', err); // eslint-disable-line

@@ -34,17 +34,13 @@ const formatTicker = ticker => {
   return ticker.slice(0, 3).toLowerCase();
 };
 
+// write updates
 const updateStream = (ticker, last, lastUpdatedAt, percDay, statusDay) => {
   ref.child(formatTicker(ticker)).update({ last, lastUpdatedAt, percDay, statusDay });
 };
 
 // read for close data
 let securitiesState = null;
-const readClose = () => {
-  ref.on('value', snapshot => {
-    securitiesState = snapshot.val();
-  });
-};
 
 // set change status
 const setDayStatus = (close, last) => {
@@ -95,7 +91,14 @@ ir.onError(err => {
   sms('Error in Intrinio websocket service!');
 });
 
-ir.join('QQQ', 'SPY', 'IWM', 'EFA', 'EEM', 'TLT', 'AGG', 'VXX');
+const readCloseAndJoin = () => {
+  ref.on('value', snapshot => {
+    securitiesState = snapshot.val();
+    // dont join until the current state is returned
+    ir.join('QQQ', 'SPY', 'IWM', 'EFA', 'EEM', 'TLT', 'AGG', 'VXX');
+  });
+};
 
-// connect to read data
-readClose();
+// fire function to connect to read data
+// and join WS
+readCloseAndJoin();
