@@ -1,2 +1,23 @@
-# quote-stream
-:money_with_wings: React Native + Firebase app for real-time market quotes
+# Quoteum
+:money_with_wings: React Native + Firebase + Docker app for real-time crypto and market quotes
+
+### Crypto data:
+- GDAX exchange websocket
+- CoinCap websocket
+
+### Stock Market data:
+- IEX exchange via [Intrinio](https://intrinio.com/) websocket
+
+### How it works:
+The `services` folder houses Docker containers that are responsible for connecting to the data feeds and pumping the data into Firebase.
+
+With a single Firebase connection, the app has access to multiple data feeds that update in real-time.
+
+### Built with:
+- [Expo](https://expo.io/)
+- [React Navigation](https://reactnavigation.org/)
+
+### Inspired By:
+- [Lionshare](https://lionshare.capital/)
+- [Exodus](https://www.exodus.io/)
+- [Robinhood](https://www.robinhood.com/)
