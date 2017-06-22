@@ -12,7 +12,8 @@
     "express-graphql": "^0.6.6",
     "firebase-admin": "~4.2.1",
     "firebase-functions": "^0.5.7",
-    "graphql": "^0.10.3"
+    "graphql": "^0.10.3",
+    "lodash.values": "^4.3.0"
   },
   "private": true
 }

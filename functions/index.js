@@ -2,6 +2,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const express = require('express');
 const graphqlHTTP = require('express-graphql');
+const values = require('lodash.values');
 const { GraphQLSchema, GraphQLObjectType, GraphQLList, GraphQLString } = require('graphql');
 
 // Init express
@@ -12,13 +13,13 @@ admin.initializeApp(functions.config().firebase);
 
 // connect to db
 const db = admin.database();
-const ref = db.ref('realtime/securities');
+const ref = db.ref('poll/securities');
 
 // fetch data
-let securitiesData = null;
+let securitiesArr = [];
 ref.on('value', snapshot => {
-  securitiesData = snapshot.val();
-  console.log(securitiesData);
+  const securitiesData = snapshot.val();
+  securitiesArr = values(securitiesData);
 });
 
 // Construct Securities Type
@@ -27,8 +28,13 @@ const SecurityType = new GraphQLObjectType({
   description: 'A stock market security',
   fields: () => ({
     symbol: { type: GraphQLString },
+    name: { type: GraphQLString },
+    open: { type: GraphQLString },
     last: { type: GraphQLString },
-    statusDay: { type: GraphQLString },
+    percDay: { type: GraphQLString },
+    status: { type: GraphQLString },
+    volume: { type: GraphQLString },
+    lastUpdatedAt: { type: GraphQLString },
   }),
 });
 
@@ -41,8 +47,7 @@ const query = new GraphQLObjectType({
       type: new GraphQLList(SecurityType),
       description: 'A list of all securities',
       resolve() {
-        console.log(securitiesData);
-        return securitiesData;
+        return securitiesArr;
       },
     },
   }),
