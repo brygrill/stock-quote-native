@@ -13,6 +13,11 @@ intrinio:
     restart: always
     container_name: INTRINIO_WS
 
+mktpoll:
+    build: ./mkt-poll
+    restart: always
+    container_name: MKT_POLL
+
 mktclose:
     build: ./mkt-close
     restart: always
