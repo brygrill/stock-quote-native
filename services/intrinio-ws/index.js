@@ -64,6 +64,7 @@ const calcDayChange = (productID, last) => {
   return { change, status };
 };
 
+// send message
 const sms = body => {
   return client.messages.create({
     to,
@@ -72,12 +73,15 @@ const sms = body => {
   });
 };
 
+// connect to ws
 ir.on('connect', () => {
   console.log('Connected to Intrinio');
 });
 
-ir.onQuote(quote => {
+// update on quote
+ir.on('quote', quote => {
   const { type, ticker, price, timestamp } = quote;
+  console.log(quote);
   if (type === 'last') {
     const { change, status } = calcDayChange(ticker, price);
     const last = numeral(price).format('$0,0.00');
@@ -86,11 +90,19 @@ ir.onQuote(quote => {
   }
 });
 
-ir.onError(err => {
+// handle err
+ir.on('error', err => {
   console.log('Error: ', err); // eslint-disable-line
   sms('Error in Intrinio websocket service!');
 });
 
+// list channels
+setTimeout(function() {
+  const channels = ir.listConnectedChannels()
+  console.log('channels:', channels);
+}, 2000);
+
+// get current state and join channels
 const readCloseAndJoin = () => {
   ref.on('value', snapshot => {
     securitiesState = snapshot.val();

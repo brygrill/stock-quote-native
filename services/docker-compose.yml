@@ -8,10 +8,10 @@ coincap:
     restart: always
     container_name: COINCAP_WS
 
-iex:
-    build: ./iex-ws
+intrinio:
+    build: ./intrinio-ws
     restart: always
-    container_name: IEX_WS
+    container_name: INTRINIO_WS
 
 mktclose:
     build: ./mkt-close
