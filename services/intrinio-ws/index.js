@@ -81,7 +81,6 @@ ir.on('connect', () => {
 // update on quote
 ir.on('quote', quote => {
   const { type, ticker, price, timestamp } = quote;
-  console.log(quote);
   if (type === 'last') {
     const { change, status } = calcDayChange(ticker, price);
     const last = numeral(price).format('$0,0.00');
