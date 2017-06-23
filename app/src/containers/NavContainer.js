@@ -7,7 +7,7 @@ import { TabNavigator } from 'react-navigation';
 import { Constants } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 
-// import CoinComponent from '../screens/CoinScreen';
+import CoinsComponent from '../screens/CoinsScreen';
 // import StockComponent from '../screens/StockScreen';
 
 // Set status bar to white
@@ -48,8 +48,8 @@ const NavIcon = (props: { color: Object, icon: string, focused: Boolean }) =>
 
 // Render Realtime Screen
 const CoinScreen = (props: { navigation: Object }) =>
-  // <CoinComponent banner="Coin Tab" navigation={props.navigation} />;
-  <ScreenContainer banner="Coin Tab" navigation={props.navigation} />;
+  <CoinsComponent banner="Coin Tab" navigation={props.navigation} />;
+  // <ScreenContainer banner="Coin Tab" navigation={props.navigation} />;
 
 CoinScreen.navigationOptions = {
   tabBarLabel: 'Coins',
