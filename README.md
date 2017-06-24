@@ -1,7 +1,6 @@
 <div align="center">
-  <h1>Quoteum :moneybag:</h1>
-  <p>React Native + Firebase + Docker app for real-time crypto and market quotes</p>
   <img src="/app/src/assets/icons/logo_name_black_770x220.png" alt="Quoteum Logo" height="220" width="770"/>
+  <p>React Native + Firebase + Docker app for real-time crypto and market quotes :moneybag:</p>
 </div>
 
 ### Crypto data:
