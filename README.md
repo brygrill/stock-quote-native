@@ -10,6 +10,7 @@
 
 ### Stock Market data:
 - IEX exchange via [Intrinio](https://intrinio.com/) websocket
+- Realtime feed via [Alpha Vantage](https://www.alphavantage.co/)
 
 ### How it works:
 The `services` folder houses Docker containers that are responsible for connecting to the data feeds and pumping the data into Firebase.
