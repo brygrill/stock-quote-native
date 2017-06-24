@@ -4,17 +4,12 @@
 </div>
 
 ### Crypto data:
-- GDAX exchange websocket
-- CoinCap websocket
+- [GDAX exchange](https://docs.gdax.com/) websocket
+- [CoinCap](https://github.com/CoinCapDev/CoinCap.io) websocket
 
 ### Stock Market data:
 - IEX exchange via [Intrinio](https://intrinio.com/) websocket
 - Realtime feed via [Alpha Vantage](https://www.alphavantage.co/)
-
-### How it works:
-The `services` folder houses Docker containers that are responsible for connecting to the data feeds and pumping the data into Firebase.
-
-With a single Firebase connection, the app has access to multiple data feeds that update in real-time.
 
 ### Built with:
 - [Expo](https://expo.io/)
@@ -24,3 +19,9 @@ With a single Firebase connection, the app has access to multiple data feeds tha
 - [Lionshare](https://lionshare.capital/)
 - [Exodus](https://www.exodus.io/)
 - [Robinhood](https://www.robinhood.com/)
+
+### How it works
+Docker containers connect to the data feeds and push into Firebase. The app connects to Firebase and has access to multiple real-time feeds.
+
+### GraphQL for good measure
+Its not realtime, but data is also available via a [GraphQL server](https://us-central1-quoteum-fd8e3.cloudfunctions.net/graphql/) deployed with a Firebase Function. 
