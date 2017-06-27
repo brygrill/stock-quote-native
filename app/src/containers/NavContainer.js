@@ -5,7 +5,7 @@ import React from 'react';
 import { Platform, StyleSheet, Text, StatusBar, View } from 'react-native';
 import { TabNavigator } from 'react-navigation';
 import { Constants } from 'expo';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, FontAwesome } from '@expo/vector-icons';
 
 import CoinsComponent from '../screens/CoinsScreen';
 // import StockComponent from '../screens/StockScreen';
@@ -46,15 +46,21 @@ const NavIcon = (props: { color: Object, icon: string, focused: Boolean }) =>
     style={{ color: props.color }}
   />;
 
+const NavIcon2 = (props: { color: Object, icon: string, focused: Boolean }) =>
+  <FontAwesome
+    name={props.icon}
+    size={20}
+    style={{ color: props.color }}
+  />;
+
 // Render Realtime Screen
 const CoinScreen = (props: { navigation: Object }) =>
   <CoinsComponent banner="Coin Tab" navigation={props.navigation} />;
-  // <ScreenContainer banner="Coin Tab" navigation={props.navigation} />;
 
 CoinScreen.navigationOptions = {
   tabBarLabel: 'Coins',
   tabBarIcon: (props: { tintColor: Object, focused: Boolean }) =>
-    <NavIcon color={props.tintColor} icon="pulse" focused={props.focused} />,
+    <NavIcon2 color={props.tintColor} icon="btc" focused={props.focused} />,
 };
 
 // Render Data Screen
@@ -64,7 +70,7 @@ const StockScreen = (props: { navigation: Object }) =>
 StockScreen.navigationOptions = {
   tabBarLabel: 'Stocks',
   tabBarIcon: (props: { tintColor: Object, focused: Boolean }) =>
-    <NavIcon color={props.tintColor} icon="speedometer" focused={props.focused} />,
+    <NavIcon2 color={props.tintColor} icon="area-chart" focused={props.focused} />,
 };
 
 // Render About Screen
@@ -74,9 +80,9 @@ const AboutScreen = (props: { navigation: Object }) =>
 AboutScreen.navigationOptions = {
   tabBarLabel: 'About',
   tabBarIcon: (props: { tintColor: Object, focused: Boolean }) =>
-    <NavIcon
+    <NavIcon2
       color={props.tintColor}
-      icon="information-circle"
+      icon="info-circle"
       focused={props.focused}
     />,
 };
@@ -101,7 +107,8 @@ const Tabs = TabNavigator(
     swipeEnabled: true,
     animationEnabled: true,
     tabBarOptions: {
-      activeTintColor: Platform.OS === 'ios' ? '#43a047' : '#fff',
+      activeTintColor: Platform.OS === 'ios' ? '#fff' : '#fff',
+      inactiveTintColor: '#404040',
       style: {
         backgroundColor: '#000',
       },

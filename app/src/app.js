@@ -1,6 +1,6 @@
 import Expo from 'expo';
 import React, { Component } from 'react';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, FontAwesome } from '@expo/vector-icons';
 
 import NavContainer from './containers/NavContainer';
 
@@ -17,6 +17,7 @@ export default class App extends Component {
   async loadAssets() {
     try {
       await Expo.Font.loadAsync(Ionicons.font);
+      await Expo.Font.loadAsync(FontAwesome.font);
     } catch (e) {
       console.log(e);
       this.setState({ error: true });

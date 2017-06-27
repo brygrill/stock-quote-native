@@ -3,9 +3,14 @@ import React, { Component } from 'react';
 import { FlatList, Text, View, StyleSheet } from 'react-native';
 import values from 'lodash.values';
 
-import AppContainer from '../containers/AppContainer';
-
 import fire from '../firebase';
+
+import AppContainer from '../containers/AppContainer';
+import QuoteCard from '../components/QuoteCard';
+
+import BTCImg from '../assets/coins/bitcoinLogo1000.png';
+import ETHImg from '../assets/coins/ETHEREUM-ICON_Black.png';
+import LTCImg from '../assets/coins/600px-Litecoin-logo.png';
 
 const styles = StyleSheet.create({
   container: {
@@ -60,12 +65,11 @@ export default class RealtimeScreen extends Component {
 
   coinsOnValue = () => {
     const coins = fire.database().ref('realtime/coins/coincap');
-    coins.on('value', (data) => {
+    coins.on('value', data => {
       const coindData = data.val();
-      console.log(coindData);
       this.setState({ coins: values(coindData) });
-    })
-  }
+    });
+  };
 
   keyExtractor = (item, index) => `${item.key}_${index}`;
 
@@ -75,15 +79,17 @@ export default class RealtimeScreen extends Component {
   };
 
   renderItem = ({ item }) => {
-    const { symbol, last, percDay } = item;
+    const { symbol, fullName, last, percDay, statusDay, lastUpdatedAt, volume } = item;
     return (
-      <View style={styles.row}>
-        <Text style={styles.rowTitle}>{symbol}</Text>
-        <View style={styles.rowStats}>
-          <Text style={styles.rowStatsPrice}>{last}</Text>
-          <Text style={styles.rowStatsChange}>{percDay}</Text>
-        </View>
-      </View>
+      <QuoteCard
+        symbol={symbol}
+        title={fullName}
+        price={last}
+        change={percDay}
+        lastUpdatedAt={lastUpdatedAt}
+        volume={volume}
+        status={statusDay}
+      />
     );
   };
 
