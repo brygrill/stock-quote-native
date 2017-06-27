@@ -11,6 +11,7 @@ export default class RealtimeScreen extends Component {
     price: string,
     change: string,
     lastUpdatedAt: string,
+    formatVol: boolean,
     volume: string,
     status: string,
   };
@@ -22,16 +23,17 @@ export default class RealtimeScreen extends Component {
       price,
       change,
       volume,
+      formatVol,
       status,
     } = this.props;
     const cardColor = setCardColor(status)
-    const volHuman = numeral(volume).format('0.0a');
+    const volHuman = formatVol ? numeral(volume).format('0.0a').toUpperCase(): volume;
     return (
       <View style={[styles.container, cardColor]}>
-        <View>
-          <Text style={styles.symbol}>{symbol}</Text>
+        <View style={styles.symbol}>
+          <Text style={styles.symbolText}>{symbol}</Text>
         </View>
-        <View style={styles.status}>
+        <View style={[styles.status, styles.padTop10]}>
           <Text style={styles.labelText}>PRICE</Text>
           <Text style={styles.labelText}>DAY</Text>
         </View>
@@ -67,11 +69,16 @@ const styles = StyleSheet.create({
   container: {
     marginHorizontal: 10,
     marginVertical: 5,
-    padding: 5,
+    padding: 10,
     flex: 1,
     backgroundColor: '#e6e6e6',
   },
   symbol: {
+    borderBottomWidth: 1,
+    borderColor: '#000',
+    marginHorizontal: 15,
+  },
+  symbolText: {
     fontWeight: '200',
     fontSize: 35,
     textAlign: 'center',
@@ -97,6 +104,9 @@ const styles = StyleSheet.create({
   },
   padTop: {
     paddingTop: 6,
+  },
+  padTop10: {
+    paddingTop: 10,
   },
   dayUp: {
     backgroundColor: '#00B16A',

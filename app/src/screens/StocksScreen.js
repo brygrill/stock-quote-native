@@ -20,7 +20,7 @@ export default class RealtimeScreen extends Component {
   }
 
   coinsOnValue = () => {
-    const coins = fire.database().ref('realtime/coins/coincap');
+    const coins = fire.database().ref('poll/securities');
     coins.on('value', data => {
       const coindData = data.val();
       this.setState({ coins: values(coindData) });
@@ -37,23 +37,23 @@ export default class RealtimeScreen extends Component {
   renderItem = (props: { item: Object }) => {  // eslint-disable-line react/no-unused-prop-types
     const {
       symbol,
-      fullName,
+      name,
       last,
       percDay,
-      statusDay,
+      status,
       lastUpdatedAt,
       volume,
     } = props.item;
     return (
       <QuoteCard
         symbol={symbol}
-        title={fullName}
+        title={name}
         price={last}
         change={percDay}
         lastUpdatedAt={lastUpdatedAt}
-        formatVol
+        formatVol={false}
         volume={volume}
-        status={statusDay}
+        status={status}
       />
     );
   };

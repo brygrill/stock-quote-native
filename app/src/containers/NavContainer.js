@@ -8,28 +8,7 @@ import { Constants } from 'expo';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 
 import CoinsComponent from '../screens/CoinsScreen';
-// import StockComponent from '../screens/StockScreen';
-
-// Set status bar to white
-StatusBar.setBarStyle('light-content', true);
-
-// Set styles
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#0d0d0d',
-  },
-  paragraph: {
-    margin: 24,
-    fontSize: 30,
-    fontWeight: '300',
-    textAlign: 'center',
-    color: '#f5f5f5',
-  },
-});
+import StocksComponent from '../screens/StocksScreen';
 
 // Base components
 const ScreenContainer = (props: { banner: string }) =>
@@ -65,7 +44,7 @@ CoinScreen.navigationOptions = {
 
 // Render Data Screen
 const StockScreen = (props: { navigation: Object }) =>
-  <ScreenContainer banner="Stock Tab" navigation={props.navigation} />;
+  <StocksComponent banner="Stock Tab" navigation={props.navigation} />;
 
 StockScreen.navigationOptions = {
   tabBarLabel: 'Stocks',
@@ -115,5 +94,26 @@ const Tabs = TabNavigator(
     },
   },
 );
+
+// Set status bar to white
+StatusBar.setBarStyle('light-content', true);
+
+// Set styles
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: '#0d0d0d',
+  },
+  paragraph: {
+    margin: 24,
+    fontSize: 30,
+    fontWeight: '300',
+    textAlign: 'center',
+    color: '#f5f5f5',
+  },
+});
 
 export default Tabs;
