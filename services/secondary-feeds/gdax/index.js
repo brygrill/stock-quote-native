@@ -4,6 +4,8 @@ const WebSocket = require('ws');
 const twilio = require('twilio');
 const moment = require('moment-timezone');
 const numeral = require('numeral');
+const cron = require('cron');
+const axios = require('axios');
 
 const serviceAccount = require('./serviceAccountKey.json');
 const secrets = require('./secrets');
@@ -38,6 +40,13 @@ const updateStream = (coin, last, lastUpdatedAt, percDay, statusDay) => {
     .child(formatCoin(coin))
     .update({ last, lastUpdatedAt, percDay, statusDay });
 };
+
+// write close updates
+const updateClose = (coin, close, closeUpdateAt) => {
+  ref.child(formatCoin(coin)).update({ close, closeUpdateAt });
+};
+
+const product_ids = ['BTC-USD', 'ETH-USD', 'LTC-USD']; // eslint-disable-line camelcase
 
 // read for close data
 let gdaxState = null;
@@ -85,7 +94,7 @@ const sms = body => {
 
 const query = {
   type: 'subscribe',
-  product_ids: ['BTC-USD', 'ETH-USD', 'LTC-USD'],
+  product_ids,
 };
 
 ws.on('open', function open() {
@@ -116,3 +125,49 @@ ws.on('error', function error(err) {
 
 // connect to read data
 readClose();
+
+// ************************** CLOSE DATA ************************** //
+// Init Axios
+const instanceGdax = axios.create({
+  baseURL: 'https://api.gdax.com',
+});
+
+const fetchCloseGdax = coin => {
+  return instanceGdax
+    .get(`/products/${coin}/ticker`, {})
+    .then(data => {
+      return data.data;
+    })
+    .catch(err => {
+      return err;
+    });
+};
+
+const fetchAllClose = () => {
+  product_ids.map(item => {
+    return fetchCloseGdax(item)
+      .then(data => {
+        const { price, time } = data;
+        const priceToNum = Number(parseFloat(price).toFixed(2));
+        const closeUpdateAt = moment(time).tz(timeZone).format();
+        updateClose(item, priceToNum, closeUpdateAt);
+      })
+      .catch(err => {
+        console.log('Error: ', err); // eslint-disable-line
+        sms(`Error fetching closing price for ${item}!`);
+      });
+  });
+};
+
+// set cron job to run
+// everyday at 12:00 EST
+const job = new cron.CronJob({
+  cronTime: '00 00 00 * * *',
+  onTick() {
+    fetchAllClose();
+  },
+  start: false,
+  timeZone,
+});
+
+job.start();

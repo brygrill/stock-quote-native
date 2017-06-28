@@ -32,7 +32,17 @@ const instance = axios.create({
 });
 
 // update firebase
-const updateStream = (ticker, open, last, tickUpdatedAt, lastUpdatedAt, lastUpdatedAtHuman, percDay, status, volume) => {
+const updateStream = (
+  ticker,
+  open,
+  last,
+  tickUpdatedAt,
+  lastUpdatedAt,
+  lastUpdatedAtHuman,
+  percDay,
+  status,
+  volume,
+) => {
   const target = ticker.toLowerCase();
   ref.child(target).update({
     open,
@@ -47,22 +57,22 @@ const updateStream = (ticker, open, last, tickUpdatedAt, lastUpdatedAt, lastUpda
 };
 
 // only send msg every 5 minutes
-const smsLastSent = (lastSent) => {
+const smsLastSent = lastSent => {
   // duration will return minutes since last sent as a negative num
-  sinceLastSent = moment.duration(lastSent.diff(moment())).asMinutes();
+  const sinceLastSent = moment.duration(lastSent.diff(moment())).asMinutes();
   if (sinceLastSent < -5) return true;
   return false;
-}
+};
 
 // send text
 const sms = body => {
   // set lastSent to script start
-  lastSent = moment();
+  let lastSent = moment();
   if (smsLastSent(lastSent)) {
     // reset last sent
     lastSent = moment();
     // send msg
-    return client.messages.create({
+    client.messages.create({
       to,
       from,
       body,
@@ -71,7 +81,7 @@ const sms = body => {
 };
 
 // format status
-const setDayStatus = (perc) => {
+const setDayStatus = perc => {
   let status = null;
   const change = parseFloat(perc);
   if (change > 0) {
@@ -110,14 +120,28 @@ const fetchAllLast = () => {
       .then(data => {
         if (!isEmpty(data)) {
           const last = numeral(data['03. Latest Price']).format('$0,0.00');
-          const open = numeral(data['04. Open (Current Trading Day)']).format('$0,0.00');
+          const open = numeral(data['04. Open (Current Trading Day)']).format(
+            '$0,0.00',
+          );
           const lastUpdatedAt = moment().tz(timeZone).format();
-          const lastUpdatedAtHuman = moment.duration(lastUpdatedAt).humanize(true)
+          const lastUpdatedAtHuman = moment
+            .duration(lastUpdatedAt)
+            .humanize(true);
           const tickUpdatedAt = data['11. Last Updated'];
           const percDay = data['09. Price Change Percentage'];
           const status = setDayStatus(percDay);
           const volume = data['10. Volume (Current Trading Day)'];
-          updateStream(item, open, last, tickUpdatedAt, lastUpdatedAt, lastUpdatedAtHuman, percDay, status, volume);
+          updateStream(
+            item,
+            open,
+            last,
+            tickUpdatedAt,
+            lastUpdatedAt,
+            lastUpdatedAtHuman,
+            percDay,
+            status,
+            volume,
+          );
         }
       })
       .catch(err => {

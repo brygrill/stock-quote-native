@@ -4,6 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.16.2",
+    "cron": "^1.2.1",
     "firebase-admin": "^5.0.0",
     "moment-timezone": "^0.5.13",
     "numeral": "^2.0.6",
