@@ -6,6 +6,8 @@ const IntrinioRealtime = require('intrinio-realtime');
 const twilio = require('twilio');
 const moment = require('moment-timezone');
 const numeral = require('numeral');
+const axios = require('axios');
+const CronJob = require('cron').CronJob;
 
 const serviceAccount = require('./serviceAccountKey.json');
 const secrets = require('./secrets');
@@ -16,6 +18,9 @@ const timeZone = 'America/New_York';
 // Init Twilio
 const { accountSID, authToken, from, to } = secrets.twilio;
 const client = new twilio(accountSID, authToken); // eslint-disable-line new-cap
+
+// Securities to fetch
+const securities = ['QQQ', 'SPY', 'IWM', 'EFA', 'EEM', 'TLT', 'AGG', 'VXX'];
 
 // Init Websocket
 const ir = new IntrinioRealtime(secrets.intrinio);
@@ -73,6 +78,7 @@ const sms = body => {
   });
 };
 
+// ************************** WS DATA ************************** //
 // connect to ws
 ir.on('connect', () => {
   console.log('Connected to Intrinio');
@@ -96,8 +102,8 @@ ir.on('error', err => {
 });
 
 // list channels
-setTimeout(function() {
-  const channels = ir.listConnectedChannels()
+setTimeout(() => {
+  const channels = ir.listConnectedChannels();
   console.log('channels:', channels);
 }, 2000);
 
@@ -106,10 +112,82 @@ const readCloseAndJoin = () => {
   ref.on('value', snapshot => {
     securitiesState = snapshot.val();
     // dont join until the current state is returned
-    ir.join('QQQ', 'SPY', 'IWM', 'EFA', 'EEM', 'TLT', 'AGG', 'VXX');
+    ir.join(securities);
   });
 };
 
 // fire function to connect to read data
 // and join WS
 readCloseAndJoin();
+
+// ************************** CLOSE DATA ************************** //
+// Init Axios
+const instance = axios.create({
+  baseURL: 'https://api.intrinio.com',
+  auth: secrets.intrinio,
+});
+
+// get last business day
+const getYesterday = () => {
+  switch (moment().day()) {
+    // thanks: http://bit.ly/2s8Nm5n
+    case 0:
+    case 1:
+    case 6:
+      return moment()
+        .tz(timeZone)
+        .subtract(6, 'days')
+        .day(5)
+        .format('YYYY-MM-DD');
+    default:
+      return moment().tz(timeZone).subtract(1, 'day').format('YYYY-MM-DD');
+  }
+};
+
+// fetch close data
+const fetchClose = identifier => {
+  return instance
+    .get('/prices', {
+      params: {
+        identifier,
+        start_date: getYesterday(),
+        end_date: getYesterday(),
+      },
+    })
+    .then(data => {
+      const { close } = data.data.data[0];
+      return close;
+    })
+    .catch(err => {
+      return err;
+    });
+};
+
+const fetchAllClose = () => {
+  securities.map(item => {
+    return fetchClose(item)
+      .then(close => {
+        const closeToNum = Number(parseFloat(close).toFixed(2));
+        const last = numeral(close).format('$0,0.00');
+        const closeUpdateAt = moment().tz(timeZone).format();
+        updateStream(item, last, closeToNum, closeUpdateAt, '0.00%', 'UNCH');
+      })
+      .catch(err => {
+        console.log('Error: ', err); // eslint-disable-line
+        sms(`Error fetching closing price for ${item}!`);
+      });
+  });
+};
+
+// set cron job to run
+// every weekday at 7am
+const job = new CronJob({
+  cronTime: '00 00 07 * * 1-5',
+  onTick() {
+    return fetchAllClose();
+  },
+  start: false,
+  timeZone,
+});
+
+job.start();
