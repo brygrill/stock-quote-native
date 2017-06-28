@@ -1,29 +1,9 @@
-gdax:
-    build: ./gdax-ws
+alphavantage:
+    build: ./feed/alpha-vantage
     restart: always
-    container_name: GDAX_WS
+    container_name: ALPHA_VANTAGE_FEED
 
 coincap:
-    build: ./coincap-ws
+    build: ./feed/coincap-ws
     restart: always
-    container_name: COINCAP_WS
-
-intrinio:
-    build: ./intrinio-ws
-    restart: always
-    container_name: INTRINIO_WS
-
-mktpoll:
-    build: ./mkt-poll
-    restart: always
-    container_name: MKT_POLL
-
-mktclose:
-    build: ./mkt-close
-    restart: always
-    container_name: MKT_CLOSE
-
-cryptoclose:
-    build: ./crypto-close
-    restart: always
-    container_name: CRYPTO_CLOSE
+    container_name: COINCAP_FEED

@@ -23,7 +23,7 @@ admin.initializeApp({
 });
 
 const db = admin.database();
-const ref = db.ref('poll/securities');
+const ref = db.ref('feed/alpha-vantage');
 
 // Init Axios
 const { apikey } = secrets.alphavantage;
@@ -35,22 +35,25 @@ const instance = axios.create({
 const updateStream = (
   ticker,
   open,
+  high,
+  low,
   last,
   tickUpdatedAt,
   lastUpdatedAt,
-  lastUpdatedAtHuman,
-  percDay,
+  priceChg,
+  priceChgPerc,
   status,
-  volume,
-) => {
+  volume) => {
   const target = ticker.toLowerCase();
   ref.child(target).update({
     open,
+    high,
+    low,
     last,
     tickUpdatedAt,
     lastUpdatedAt,
-    lastUpdatedAtHuman,
-    percDay,
+    priceChg,
+    priceChgPerc,
     status,
     volume,
   });
@@ -95,7 +98,7 @@ const setDayStatus = perc => {
 };
 
 // fetch close data
-const securities = ['QQQ', 'SPY', 'IWM', 'TLT'];
+const securities = ['QQQ', 'SPY', 'TLT'];
 
 const fetchLast = symbol => {
   return instance
@@ -119,29 +122,29 @@ const fetchAllLast = () => {
     return fetchLast(item)
       .then(data => {
         if (!isEmpty(data)) {
+          console.log(data);
           const last = numeral(data['03. Latest Price']).format('$0,0.00');
-          const open = numeral(data['04. Open (Current Trading Day)']).format(
-            '$0,0.00',
-          );
+          const open = numeral(data['04. Open (Current Trading Day)']).format('$0,0.00');
+          const high = numeral(data['05. High (Current Trading Day)']).format('$0,0.00');
+          const low = numeral(data['06. Low (Current Trading Day)']).format('$0,0.00');
           const lastUpdatedAt = moment().tz(timeZone).format();
-          const lastUpdatedAtHuman = moment
-            .duration(lastUpdatedAt)
-            .humanize(true);
           const tickUpdatedAt = data['11. Last Updated'];
-          const percDay = data['09. Price Change Percentage'];
-          const status = setDayStatus(percDay);
-          const volume = data['10. Volume (Current Trading Day)'];
+          const priceChg = numeral(data['08. Price Change']).format('$0,0.00');
+          const priceChgPerc = data['09. Price Change Percentage'];
+          const status = setDayStatus(priceChgPerc);
+          const volume = numeral(data['10. Volume (Current Trading Day)']).format('0.0a').toUpperCase();
           updateStream(
             item,
             open,
+            high,
+            low,
             last,
             tickUpdatedAt,
             lastUpdatedAt,
-            lastUpdatedAtHuman,
-            percDay,
+            priceChg,
+            priceChgPerc,
             status,
-            volume,
-          );
+            volume);
         }
       })
       .catch(err => {
@@ -154,7 +157,8 @@ const fetchAllLast = () => {
 // set cron job to run
 // poll every few second during market hours
 const job = new CronJob({
-  cronTime: '*/4 * 08-17 * * 1-5',
+  //cronTime: '*/4 * 08-17 * * 1-5',
+  cronTime: '*/4 * * * * *',
   onTick() {
     return fetchAllLast();
   },

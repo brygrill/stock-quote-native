@@ -13,7 +13,10 @@ const find = require('lodash.find');
 const serviceAccount = require('./serviceAccountKey.json');
 const secrets = require('./secrets');
 
-// set timezone
+// Set coins
+const coins = ['BTC', 'ETH', 'LTC'];
+
+// Set timezone
 const timeZone = 'America/New_York';
 
 // Init Twilio
@@ -30,13 +33,14 @@ admin.initializeApp({
 });
 
 const db = admin.database();
-const ref = db.ref('realtime/coins/coincap');
+const ref = db.ref('feed/coincap');
 
-// format coin
+// Format Coin
 const formatCoin = coin => {
   return coin.slice(0, 3).toLowerCase();
 };
 
+// ************************** WRITE UPDATES ************************** //
 // write ws updates
 const updateStream = (
   coin,
@@ -56,6 +60,7 @@ const updateClose = (coin, close, closeUpdateAt) => {
   ref.child(formatCoin(coin)).update({ close, closeUpdateAt });
 };
 
+// ************************** READ CLOSE ************************** //
 // read for close data
 let coinCapState = null;
 const readClose = () => {
@@ -86,21 +91,26 @@ const calcDayChange = (productID, last) => {
   return { change, status };
 };
 
+// ************************** SMS ************************** //
+// set last sent to null at script start
+let lastSentTime = null;
+
 // only send msg every 5 minutes
 const smsLastSent = lastSent => {
   // duration will return minutes since last sent as a negative num
-  const sinceLastSent = moment.duration(lastSent.diff(moment())).asMinutes();
-  if (sinceLastSent < -5) return true;
+  if (lastSentTime) {
+    const sinceLastSent = moment.duration(lastSent.diff(moment())).asMinutes();
+    if (sinceLastSent < -5) return true;
+    return false;
+  }
   return false;
 };
 
 // send text
 const sms = body => {
-  // set lastSent to script start
-  let lastSent = moment();
-  if (smsLastSent(lastSent)) {
+  if (smsLastSent(lastSentTime)) {
     // reset last sent
-    lastSent = moment();
+    lastSentTime = moment();
     // send msg
     client.messages.create({
       to,
@@ -109,8 +119,6 @@ const sms = body => {
     });
   }
 };
-
-const coins = ['BTC', 'ETH', 'LTC'];
 
 // ************************** WS DATA ************************** //
 
@@ -130,11 +138,12 @@ socket.on('error', err => {
 socket.on('trades', trade => {
   const { message } = trade;
   if (coins.includes(message.coin)) {
-    const { time, short, cap24hrChange, price, volume } = message.msg;
+    console.log(message.msg);
+    const { time, short, cap24hrChange, price, usdVolume } = message.msg;
     const { change, status } = calcDayChange(short, price);
     const perc24 = numeral(cap24hrChange / 100).format('0.00%');
     const last = numeral(price).format('$0,0.00');
-    const vol = numeral(volume).format('0,0');
+    const vol = numeral(usdVolume).format('($0.00a)').toUpperCase();
     const lastUpdatedAt = moment(time).tz(timeZone).format();
     updateStream(short, last, lastUpdatedAt, perc24, vol, change, status);
   }
@@ -162,9 +171,9 @@ const fetchAllClose = () => {
         const coinRecord = find(data, coin => {
           return coin.short === item;
         });
-        const { price, time } = coinRecord;
+        const { price } = coinRecord;
         const priceToNum = Number(parseFloat(price).toFixed(2));
-        const closeUpdateAt = moment(time).tz(timeZone).format();
+        const closeUpdateAt = moment().tz(timeZone).format();
         return updateClose(item, priceToNum, closeUpdateAt);
       });
     })
@@ -178,6 +187,7 @@ const fetchAllClose = () => {
 // everyday at 12:00 EST
 const job = new cron.CronJob({
   cronTime: '00 00 00 * * *',
+  //cronTime: '* * * * * *',
   onTick() {
     fetchAllClose();
   },
