@@ -46,39 +46,40 @@ const updateStream = (
   coin,
   last,
   lastUpdatedAt,
-  perc24,
   volume,
   priceChgPerc,
   priceChg,
   statusDay) => {
   ref
     .child(formatCoin(coin))
-    .update({ last, lastUpdatedAt, perc24, volume, priceChgPerc, priceChg, statusDay });
+    .update({ last, lastUpdatedAt, volume, priceChgPerc, priceChg, statusDay });
 };
 
-// write close updates
-const updateClose = (coin, close, closeUpdateAt) => {
-  ref.child(formatCoin(coin)).update({ close, closeUpdateAt });
+// write open updates
+const updateOpen = (coin, open, openUpdateAt) => {
+  ref.child(formatCoin(coin)).update({ open, openUpdateAt });
 };
 
-// ************************** READ CLOSE ************************** //
-// read for close data
+// ************************** READ OPEN ************************** //
+// read for open data
 let coinCapState = null;
-const readClose = () => {
+const readOpen = () => {
   ref.on('value', snapshot => {
     coinCapState = snapshot.val();
   });
 };
 
 // set change status
-const setDayStatus = (close, last) => {
+const setDayStatus = (open, last) => {
   let status = null;
-  if (last > close) {
+  if (last > open) {
     status = 'UP';
-  } else if (last < close) {
+  } else if (last < open) {
     status = 'DOWN';
-  } else if (last === close) {
+  } else if (last === open) {
     status = 'UNCH';
+  } else {
+    status = '--';
   }
   return status;
 };
@@ -86,10 +87,10 @@ const setDayStatus = (close, last) => {
 // calc change
 const calcDayChange = (productID, last) => {
   const coin = formatCoin(productID);
-  const close = coinCapState ? coinCapState[coin].close : null;
-  const priceChgPerc = close ? numeral((last - close) / close).format('0.00%') : null;
-  const priceChg = close ? numeral(last - close).format('$0,0.00') : null;
-  const status = close ? setDayStatus(close, last) : null;
+  const open = coinCapState ? coinCapState[coin].open : null;
+  const priceChgPerc = open ? numeral((last - open) / open).format('0.00%') : '--';
+  const priceChg = open ? numeral(last - open).format('$0,0.00') : '--';
+  const status = open ? setDayStatus(open, last) : '--';
   return { priceChgPerc, priceChg, status };
 };
 
@@ -141,21 +142,20 @@ socket.on('trades', trade => {
   const { message } = trade;
   if (coins.includes(message.coin)) {
     console.log(message.msg);
-    const { time, short, cap24hrChange, price, usdVolume } = message.msg;
+    const { time, short, price, usdVolume } = message.msg;
     const { priceChgPerc, priceChg, status } = calcDayChange(short, price);
-    const perc24 = numeral(cap24hrChange / 100).format('0.00%');
     const last = numeral(price).format('$0,0.00');
     const vol = numeral(usdVolume).format('($0.00a)').toUpperCase();
     const lastUpdatedAt = moment(time).tz(timeZone).format();
-    updateStream(short, last, lastUpdatedAt, perc24, vol, priceChgPerc, priceChg, status);
+    updateStream(short, last, lastUpdatedAt, vol, priceChgPerc, priceChg, status);
   }
 });
 
 // connect to read data
-readClose();
+readOpen();
 
-// ************************** CLOSE DATA ************************** //
-const fetchClose = () => {
+// ************************** OPEN DATA ************************** //
+const fetchOpen = () => {
   return axios
     .get('http://www.coincap.io/front', {})
     .then(data => {
@@ -166,8 +166,8 @@ const fetchClose = () => {
     });
 };
 
-const fetchAllClose = () => {
-  return fetchClose()
+const fetchAllOpen = () => {
+  return fetchOpen()
     .then(data => {
       coins.map(item => {
         const coinRecord = find(data, coin => {
@@ -175,8 +175,8 @@ const fetchAllClose = () => {
         });
         const { price } = coinRecord;
         const priceToNum = Number(parseFloat(price).toFixed(2));
-        const closeUpdateAt = moment().tz(timeZone).format();
-        return updateClose(item, priceToNum, closeUpdateAt);
+        const openUpdateAt = moment().tz(timeZone).format();
+        return updateOpen(item, priceToNum, openUpdateAt);
       });
     })
     .catch(err => {
@@ -188,10 +188,10 @@ const fetchAllClose = () => {
 // set cron job to run
 // everyday at 12:00 EST
 const job = new cron.CronJob({
-  cronTime: '00 00 00 * * *',
-  //cronTime: '* * * * * *',
+  //cronTime: '00 00 00 * * *',
+  cronTime: '* * * * * *',
   onTick() {
-    fetchAllClose();
+    fetchAllOpen();
   },
   start: false,
   timeZone,
