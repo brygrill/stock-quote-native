@@ -56,8 +56,14 @@ const updateStream = (
 };
 
 // write open updates
-const updateOpen = (coin, open, openUpdateAt) => {
-  ref.child(formatCoin(coin)).update({ open, openUpdateAt });
+// set open, high and low to current price
+const updateOpen = (coin, open, high, low, openUpdateAt) => {
+  ref.child(formatCoin(coin)).update({
+    open,
+    high,
+    low,
+    openUpdateAt,
+  });
 };
 
 // ************************** READ OPEN ************************** //
@@ -69,6 +75,7 @@ const readOpen = () => {
   });
 };
 
+// ************************** FORMAT DATA ************************** //
 // set change status
 const setDayStatus = (open, last) => {
   let status = null;
@@ -176,7 +183,7 @@ const fetchAllOpen = () => {
         const { price } = coinRecord;
         const priceToNum = Number(parseFloat(price).toFixed(2));
         const openUpdateAt = moment().tz(timeZone).format();
-        return updateOpen(item, priceToNum, openUpdateAt);
+        return updateOpen(item, priceToNum, '--', '--', openUpdateAt);
       });
     })
     .catch(err => {
