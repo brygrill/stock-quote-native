@@ -48,11 +48,12 @@ const updateStream = (
   lastUpdatedAt,
   perc24,
   volume,
-  percDay,
+  priceChgPerc,
+  priceChg,
   statusDay) => {
   ref
     .child(formatCoin(coin))
-    .update({ last, lastUpdatedAt, perc24, volume, percDay, statusDay });
+    .update({ last, lastUpdatedAt, perc24, volume, priceChgPerc, priceChg, statusDay });
 };
 
 // write close updates
@@ -86,9 +87,10 @@ const setDayStatus = (close, last) => {
 const calcDayChange = (productID, last) => {
   const coin = formatCoin(productID);
   const close = coinCapState ? coinCapState[coin].close : null;
-  const change = close ? numeral((last - close) / close).format('0.00%') : null;
+  const priceChgPerc = close ? numeral((last - close) / close).format('0.00%') : null;
+  const priceChg = close ? numeral(last - close).format('$0,0.00') : null;
   const status = close ? setDayStatus(close, last) : null;
-  return { change, status };
+  return { priceChgPerc, priceChg, status };
 };
 
 // ************************** SMS ************************** //
@@ -140,12 +142,12 @@ socket.on('trades', trade => {
   if (coins.includes(message.coin)) {
     console.log(message.msg);
     const { time, short, cap24hrChange, price, usdVolume } = message.msg;
-    const { change, status } = calcDayChange(short, price);
+    const { priceChgPerc, priceChg, status } = calcDayChange(short, price);
     const perc24 = numeral(cap24hrChange / 100).format('0.00%');
     const last = numeral(price).format('$0,0.00');
     const vol = numeral(usdVolume).format('($0.00a)').toUpperCase();
     const lastUpdatedAt = moment(time).tz(timeZone).format();
-    updateStream(short, last, lastUpdatedAt, perc24, vol, change, status);
+    updateStream(short, last, lastUpdatedAt, perc24, vol, priceChgPerc, priceChg, status);
   }
 });
 
