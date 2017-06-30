@@ -1,4 +1,5 @@
 /* eslint-disable new-cap */
+/* eslint-disable no-param-reassign */
 const express = require('express');
 const axios = require('axios');
 const twilio = require('twilio');
@@ -27,39 +28,98 @@ const { apikey } = secrets.alphavantage;
 const instance = axios.create({
   baseURL: 'http://www.alphavantage.co',
 });
-// ************************** FORMAT DATA ************************** //
 
-// ************************** SET DATA ************************** //
+// Init Securities
+// Securities to push out
 const securities = ['QQQ', 'SPY', 'TLT'];
+
+// Last tick for each security
 let QQQ = {};
 let SPY = {};
 let TLT = {};
 
+// ************************** FORMAT DATA ************************** //
+const setDayStatus = perc => {
+  let status = null;
+  const change = parseFloat(perc);
+  if (change > 0) {
+    status = 'UP';
+  } else if (change < 0) {
+    status = 'DOWN';
+  } else if (change === 0) {
+    status = 'UNCH';
+  }
+  return status;
+};
+
+const formatCurrency = data => {
+  return numeral(data).format('$0,0.00');
+};
+
+const formatAlphaResp = (symbol, data) => {
+  return {
+    symbol,
+    last: formatCurrency(data['03. Latest Price']),
+    open: formatCurrency(data['04. Open (Current Trading Day)']),
+    high: formatCurrency(data['05. High (Current Trading Day)']),
+    low: formatCurrency(data['06. Low (Current Trading Day)']),
+    priceChg: formatCurrency(data['08. Price Change']),
+    priceChgPerc: data['09. Price Change Percentage'],
+    status: setDayStatus(data['09. Price Change Percentage']),
+    volume: numeral(data['10. Volume (Current Trading Day)']).format('0.0a').toUpperCase(),
+    tickUpdatedAt: data['11. Last Updated'],
+  };
+};
+
+// ************************** EMIT DATA ************************** //
+// Push current data on connection
+const pushLast = () => {
+  io.emit('tick', [QQQ, SPY, TLT]);
+};
+
+// Function that pushes data to subscribed clients
 const pushTick = (data) => {
   io.emit('tick', data);
 };
 
+// ************************** SET DATA ************************** //
+// Push the tick if it changed
 const setAndPushTick = (security, data) => {
   switch (security) {
     case 'QQQ':
       if (!_.isEqual(QQQ, data)) {
-        console.log(QQQ);
-        console.log(data);
-        console.log();
+        // set last updated
+        const lastUpdate = {
+          lastUpdatedAt: moment().tz(timeZone).format(),
+        };
+        // set security to new data
         QQQ = data;
-        pushTick(data);
+        // push to socket
+        pushTick(_.assign({}, data, lastUpdate));
       }
       break;
     case 'SPY':
       if (!_.isEqual(SPY, data)) {
+        // set last updated
+        const lastUpdate = {
+          lastUpdatedAt: moment().tz(timeZone).format(),
+        };
+        // set security to new data
         SPY = data;
-        pushTick(data);
+        // push to socket
+        pushTick(_.assign({}, data, lastUpdate));
       }
       break;
     case 'TLT':
       if (!_.isEqual(TLT, data)) {
+        // set last updated
+        const lastUpdate = {
+          lastUpdatedAt: moment().tz(timeZone).format(),
+        };
+        // set security to new data
         TLT = data;
-        pushTick(data);
+        // push to socket
+        pushTick(_.assign({}, data, lastUpdate));
       }
       break;
     default:
@@ -91,29 +151,7 @@ const fetchAllLast = () => {
       .then(data => {
         if (!_.isEmpty(data)) {
           //console.log(data);
-          const last = numeral(data['03. Latest Price']).format('$0,0.00');
-          const open = numeral(data['04. Open (Current Trading Day)']).format('$0,0.00');
-          const high = numeral(data['05. High (Current Trading Day)']).format('$0,0.00');
-          const low = numeral(data['06. Low (Current Trading Day)']).format('$0,0.00');
-
-          const tickUpdatedAt = data['11. Last Updated'];
-          const priceChg = numeral(data['08. Price Change']).format('$0,0.00');
-          const priceChgPerc = data['09. Price Change Percentage'];
-          const volume = numeral(data['10. Volume (Current Trading Day)']).format('0.0a').toUpperCase();
-
-          const formattedData = {
-            symbol,
-            open,
-            high,
-            low,
-            last,
-            tickUpdatedAt,
-            priceChg,
-            priceChgPerc,
-            volume,
-          };
-
-          setAndPushTick(symbol, formattedData);
+          setAndPushTick(symbol, formatAlphaResp(symbol, data));
         }
       })
       .catch(err => {
@@ -123,7 +161,7 @@ const fetchAllLast = () => {
 };
 
 const job = new CronJob({
-  //cronTime: '*/4 * 08-17 * * 1-5',
+  //cronTime: '*/4 * 08-16 * * 1-5',
   cronTime: '*/1 * * * * *',
   onTick() {
     return fetchAllLast();
@@ -143,6 +181,7 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', socket => {
+  pushLast();
   console.log('user connected');
   socket.on('disconnect', () => {
     console.log('user disconnected');
