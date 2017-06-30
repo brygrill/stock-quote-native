@@ -1,5 +1,7 @@
 /* eslint-disable new-cap */
 /* eslint-disable no-param-reassign */
+/* eslint-disable no-console */
+
 const express = require('express');
 const axios = require('axios');
 const twilio = require('twilio');
@@ -37,6 +39,15 @@ const securities = ['QQQ', 'SPY', 'TLT'];
 let QQQ = {};
 let SPY = {};
 let TLT = {};
+
+// Send SMS
+const sms = body => {
+  return client.messages.create({
+    to,
+    from,
+    body,
+  });
+};
 
 // ************************** FORMAT DATA ************************** //
 const setDayStatus = perc => {
@@ -150,12 +161,12 @@ const fetchAllLast = () => {
     return fetchLast(symbol)
       .then(data => {
         if (!_.isEmpty(data)) {
-          //console.log(data);
           setAndPushTick(symbol, formatAlphaResp(symbol, data));
         }
       })
       .catch(err => {
         console.log('Error: ', err); // eslint-disable-line
+        sms(`Error fetching data for ${symbol}!`);
       });
   });
 };
@@ -182,12 +193,16 @@ app.get('/', (req, res) => {
 
 io.on('connection', socket => {
   pushLast();
-  console.log('user connected');
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
+  console.log(`User ${socket.id} connected`);
+  socket.on('disconnect', reason => {
+    console.log(`User ${socket.id} disconnected because ${reason}`);
+  });
+  socket.on('error', err => {
+    console.log(`Error: ${err}`);
+    sms('Alpha Vantage websocket error!');
   });
 });
 
 http.listen(3009, () => {
-  console.log('Example app listening on port 3009!');
+  console.log('Alpha Vantage Websocket Server is Running');
 });

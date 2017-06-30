@@ -7,6 +7,10 @@ socket.on('connect', () => {
   console.log('Connected to WS server');
 });
 
+socket.on('disconnect', err => {
+  console.log('Disconnected: ', err);
+});
+
 socket.on('error', err => {
   console.log('Error: ', err);
 });
