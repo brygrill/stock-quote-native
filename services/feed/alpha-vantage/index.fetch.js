@@ -1,4 +1,3 @@
-/* eslint-disable new-cap */
 const admin = require('firebase-admin');
 const axios = require('axios');
 const twilio = require('twilio');
@@ -6,9 +5,6 @@ const moment = require('moment-timezone');
 const CronJob = require('cron').CronJob;
 const numeral = require('numeral');
 const isEmpty = require('lodash.isempty');
-const io = require('socket.io-client');
-
-const socket = new io('http://localhost:3009');
 
 const serviceAccount = require('./serviceAccountKey.json');
 const secrets = require('./secrets');
@@ -171,31 +167,3 @@ const job = new CronJob({
 });
 
 job.start();
-
-// ************************** WS DATA ************************** //
-
-socket.on('connect', () => {
-  console.log('Connected to CoinCap');
-});
-
-socket.on('disconnect', err => {
-  console.log('Disconnected: ', err);
-});
-
-socket.on('error', err => {
-  console.log('Error: ', err);
-  sms('Error in CoinCap websocket service!');
-});
-
-socket.on('trades', trade => {
-  const { message } = trade;
-  if (coins.includes(message.coin)) {
-    console.log(message.msg);
-    const { time, short, price, usdVolume } = message.msg;
-    const { priceChgPerc, priceChg, status } = calcDayChange(short, price);
-    const last = numeral(price).format('$0,0.00');
-    const vol = numeral(usdVolume).format('($0.00a)').toUpperCase();
-    const lastUpdatedAt = moment(time).tz(timeZone).format();
-    updateStream(short, last, lastUpdatedAt, vol, priceChgPerc, priceChg, status);
-  }
-});
