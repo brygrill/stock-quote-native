@@ -18,12 +18,9 @@ React Native + Firebase + Firebase Functions for crypto and market quotes :money
 - [Robinhood](https://www.robinhood.com/)
 
 ### How it works
-~~In `services`, Docker containers connect to the data feeds and push data into Firebase. The app connects to Firebase and has access to multiple real-time feeds.~~
+In the `services` folder, Docker containers connect to the data feeds and push data into Firebase. The app connects to Firebase and has access to multiple real-time feeds.
 
-I didnt feel like paying to keep the server running...so I created a Firebase HTTP Function that updates the data when a request is made. 
-
-TODO:
-This is hit on a regular interval via a cron job.
+There is also a Firebase HTTP Function that updates the data when a request is made. That can be hit on an interval via cron job.
 
 ### GraphQL for good measure
 Its not realtime, but data is also available via a [GraphQL server](https://us-central1-quoteum-fd8e3.cloudfunctions.net/graphql/) deployed with a Firebase Function. 
