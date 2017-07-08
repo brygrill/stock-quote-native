@@ -1,7 +1,4 @@
-<div align="center">
-  <img src="/app/src/assets/icons/logo_name_black_770x220.png" alt="Quoteum Logo" height="220" width="770"/>
-  <p>React Native + Firebase + Docker app for real-time crypto and market quotes :moneybag:</p>
-</div>
+React Native + Firebase + Firebase Functions for crypto and market quotes :moneybag:
 
 ### Crypto data:
 - [GDAX exchange](https://docs.gdax.com/) websocket
@@ -21,7 +18,12 @@
 - [Robinhood](https://www.robinhood.com/)
 
 ### How it works
-Docker containers connect to the data feeds and push into Firebase. The app connects to Firebase and has access to multiple real-time feeds.
+~~In `services`, Docker containers connect to the data feeds and push data into Firebase. The app connects to Firebase and has access to multiple real-time feeds.~~
+
+I didnt feel like paying to keep the server running...so I created a Firebase HTTP Function that updates the data when a request is made. 
+
+TODO:
+This is hit on a regular interval via a cron job.
 
 ### GraphQL for good measure
 Its not realtime, but data is also available via a [GraphQL server](https://us-central1-quoteum-fd8e3.cloudfunctions.net/graphql/) deployed with a Firebase Function. 
