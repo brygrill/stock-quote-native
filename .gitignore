@@ -1,6 +1,9 @@
 Expo
 app/.expo/**/*
 
+#Vender data
+lib
+
 # Data
 data
 database.rules.json

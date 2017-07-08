@@ -1,66 +1,95 @@
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
 const express = require('express');
 const graphqlHTTP = require('express-graphql');
 const values = require('lodash.values');
-const { GraphQLSchema, GraphQLObjectType, GraphQLList, GraphQLString } = require('graphql');
+const {
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLList,
+  GraphQLString,
+} = require('graphql');
 
-// Init express
-const app = express();
+exports.app = admin => {
+  // Init express
+  const app = express();
 
-// Init Firebase admin
-admin.initializeApp(functions.config().firebase);
+  // connect to db
+  const db = admin.database();
+  const ref = db.ref('poll');
 
-// connect to db
-const db = admin.database();
-const ref = db.ref('poll/securities');
+  // fetch data
+  let securitiesArr = [];
+  let coinsArr = [];
+  ref.on('value', snapshot => {
+    const securitiesData = snapshot.val();
+    securitiesArr = values(securitiesData.securities);
+    coinsArr = values(securitiesData.coins);
+  });
 
-// fetch data
-let securitiesArr = [];
-ref.on('value', snapshot => {
-  const securitiesData = snapshot.val();
-  securitiesArr = values(securitiesData);
-});
+  // Construct Securities Type
+  const SecurityType = new GraphQLObjectType({
+    name: 'Security',
+    description: 'A stock market security',
+    fields: () => ({
+      symbol: { type: GraphQLString },
+      name: { type: GraphQLString },
+      open: { type: GraphQLString },
+      high: { type: GraphQLString },
+      low: { type: GraphQLString },
+      last: { type: GraphQLString },
+      priceChg: { type: GraphQLString },
+      priceChgPerc: { type: GraphQLString },
+      volume: { type: GraphQLString },
+      lastUpdatedAt: { type: GraphQLString },
+      tickUpdatedAt: { type: GraphQLString },
+    }),
+  });
 
-// Construct Securities Type
-const SecurityType = new GraphQLObjectType({
-  name: 'Security',
-  description: 'A stock market security',
-  fields: () => ({
-    symbol: { type: GraphQLString },
-    name: { type: GraphQLString },
-    open: { type: GraphQLString },
-    last: { type: GraphQLString },
-    percDay: { type: GraphQLString },
-    status: { type: GraphQLString },
-    volume: { type: GraphQLString },
-    lastUpdatedAt: { type: GraphQLString },
-  }),
-});
+  const CoinType = new GraphQLObjectType({
+    name: 'Coin',
+    description: 'A cryptocurrency',
+    fields: () => ({
+      symbol: { type: GraphQLString },
+      name: { type: GraphQLString },
+      last: { type: GraphQLString },
+      priceChgPerc: { type: GraphQLString },
+      volume: { type: GraphQLString },
+      lastUpdatedAt: { type: GraphQLString },
+    }),
+  });
 
-// Construct root query
-const query = new GraphQLObjectType({
-  name: 'Query',
-  description: 'The Root Query',
-  fields: () => ({
-    securities: {
-      type: new GraphQLList(SecurityType),
-      description: 'A list of all securities',
-      resolve() {
-        return securitiesArr;
+  // Construct root query
+  const query = new GraphQLObjectType({
+    name: 'Query',
+    description: 'The Root Query',
+    fields: () => ({
+      securities: {
+        type: new GraphQLList(SecurityType),
+        description: 'A list of all securities',
+        resolve() {
+          return securitiesArr;
+        },
       },
-    },
-  }),
-});
+      coins: {
+        type: new GraphQLList(CoinType),
+        description: 'A list of all cryptocurrencies',
+        resolve() {
+          return coinsArr;
+        },
+      },
+    }),
+  });
 
-// Construct the schema
-const schema = new GraphQLSchema({
-  query,
-});
+  // Construct the schema
+  const schema = new GraphQLSchema({
+    query,
+  });
 
-app.use('/', graphqlHTTP({
-  schema,
-  graphiql: true,
-}));
+  app.use(
+    '/',
+    graphqlHTTP({
+      schema,
+      graphiql: true,
+    }));
 
-exports.graphqlServer = app;
+  return app;
+};
