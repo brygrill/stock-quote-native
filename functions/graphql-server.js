@@ -1,5 +1,6 @@
 const express = require('express');
 const graphqlHTTP = require('express-graphql');
+const axios = require('axios');
 const values = require('lodash.values');
 const {
   GraphQLSchema,
@@ -17,13 +18,15 @@ exports.app = admin => {
   const ref = db.ref('poll');
 
   // fetch data
-  let securitiesArr = [];
-  let coinsArr = [];
-  ref.on('value', snapshot => {
-    const securitiesData = snapshot.val();
-    securitiesArr = values(securitiesData.securities);
-    coinsArr = values(securitiesData.coins);
-  });
+  // let securitiesArr = [];
+  // let coinsArr = [];
+  // ref.on('value', snapshot => {
+  //   const securitiesData = snapshot.val();
+  //   securitiesArr = values(securitiesData.securities);
+  //   coinsArr = values(securitiesData.coins);
+  // });
+
+  // ref.once('value').then(data => {});
 
   // Construct Securities Type
   const SecurityType = new GraphQLObjectType({
@@ -66,14 +69,18 @@ exports.app = admin => {
         type: new GraphQLList(SecurityType),
         description: 'A list of all securities',
         resolve() {
-          return securitiesArr;
+          return ref.child('securities').once('value').then(data => {
+            return values(data.val());
+          });
         },
       },
       coins: {
         type: new GraphQLList(CoinType),
         description: 'A list of all cryptocurrencies',
         resolve() {
-          return coinsArr;
+          return ref.child('coins').once('value').then(data => {
+            return values(data.val());
+          });
         },
       },
     }),
@@ -83,6 +90,15 @@ exports.app = admin => {
   const schema = new GraphQLSchema({
     query,
   });
+
+  // Fetch prices middleware
+  // Fire function to update prices every time graphql is hit
+  const fetchPrices = (req, res, next) => {
+    axios.get('https://us-central1-quoteum-fd8e3.cloudfunctions.net/prices');
+    next();
+  };
+
+  app.use(fetchPrices);
 
   app.use(
     '/',
