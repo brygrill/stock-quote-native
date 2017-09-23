@@ -26,7 +26,7 @@ export default class RealtimeScreen extends Component {
       formatVol,
       status,
     } = this.props;
-    const cardColor = setCardColor(status)
+    const cardColor = setCardColor(change)
     const volHuman = formatVol ? numeral(volume).format('0.0a').toUpperCase(): volume;
     return (
       <View style={[styles.container, cardColor]}>
@@ -54,11 +54,14 @@ export default class RealtimeScreen extends Component {
   }
 }
 
-const setCardColor = status => {
-  switch (status) {
-    case 'UP':
+const setCardColor = perc => {
+  const percNum = numeral(perc).value();
+  console.log(percNum);
+  console.log(typeof percNum);
+  switch (percNum) {
+    case percNum > 0:
       return styles.dayUp;
-    case 'DOWN':
+    case percNum < 0:
       return styles.dayDown;
     default:
       return styles.dayUnch;

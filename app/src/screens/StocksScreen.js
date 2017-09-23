@@ -39,7 +39,7 @@ export default class RealtimeScreen extends Component {
       symbol,
       name,
       last,
-      percDay,
+      priceChgPerc,
       status,
       lastUpdatedAt,
       volume,
@@ -49,7 +49,7 @@ export default class RealtimeScreen extends Component {
         symbol={symbol}
         title={name}
         price={last}
-        change={percDay}
+        change={priceChgPerc}
         lastUpdatedAt={lastUpdatedAt}
         formatVol={false}
         volume={volume}
