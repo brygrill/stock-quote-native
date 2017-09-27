@@ -13,7 +13,6 @@ export default class RealtimeScreen extends Component {
     lastUpdatedAt: string,
     formatVol: boolean,
     volume: string,
-    status: string,
   };
 
   render() {
@@ -24,9 +23,10 @@ export default class RealtimeScreen extends Component {
       change,
       volume,
       formatVol,
-      status,
+      lastUpdatedAt,
     } = this.props;
-    const cardColor = setCardColor(change)
+    const last = moment(lastUpdatedAt).format('M-D-YY h:mm A');
+    const cardColor = setCardColor(change);
     const volHuman = formatVol ? numeral(volume).format('0.0a').toUpperCase(): volume;
     return (
       <View style={[styles.container, cardColor]}>
@@ -49,6 +49,12 @@ export default class RealtimeScreen extends Component {
           <Text style={styles.statusText}>{title}</Text>
           <Text style={styles.statusText}>{volHuman}</Text>
         </View>
+        <View style={[styles.status, styles.padTop]}>
+          <Text style={styles.labelText}>LAST</Text>
+        </View>
+        <View style={styles.status}>
+          <Text style={styles.statusText}>{last}</Text>
+        </View>
       </View>
     );
   }
@@ -56,16 +62,12 @@ export default class RealtimeScreen extends Component {
 
 const setCardColor = perc => {
   const percNum = numeral(perc).value();
-  console.log(percNum);
-  console.log(typeof percNum);
-  switch (percNum) {
-    case percNum > 0:
-      return styles.dayUp;
-    case percNum < 0:
-      return styles.dayDown;
-    default:
-      return styles.dayUnch;
+  if (percNum > 0) {
+    return styles.dayUp;
+  } else if (percNum < 0) {
+    return styles.dayDown;
   }
+  return styles.dayUnch;
 };
 
 const styles = StyleSheet.create({
