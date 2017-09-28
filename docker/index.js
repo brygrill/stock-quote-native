@@ -1,10 +1,12 @@
 const admin = require('firebase-admin');
 const CronJob = require('cron').CronJob;
+const express = require('express');
 
-const poll = require('./fetch-prices.js');
+const poll = require('./fetch-prices');
 
 const serviceAccount = require('./serviceAccountKey.json');
 const secrets = require('./secrets');
+
 const timeZone = 'America/New_York';
 
 // Init Firebase
@@ -15,7 +17,7 @@ admin.initializeApp({
 
 // run every 5 minutes
 const runCron = new CronJob({
-  cronTime: '10 * * * * *',
+  cronTime: '0 */5 * * * *',
   onTick() {
     return poll.prices(admin, secrets, timeZone);
   },
@@ -25,3 +27,14 @@ const runCron = new CronJob({
 });
 
 runCron.start();
+
+// Express server just to make sure container is running
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Quoteum Docker!');
+});
+
+app.listen(3000, () => {
+  console.log('Listening on port 3000!');
+});

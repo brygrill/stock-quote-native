@@ -8,6 +8,7 @@ const find = require('lodash.find');
 const isEmpty = require('lodash.isempty');
 
 exports.prices = admin => {
+  console.log('Fetching Prices');
   // connect to db
   const db = admin.database();
   const ref = db.ref('poll');

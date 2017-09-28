@@ -19,4 +19,7 @@ COPY . .
 # Install Deps
 RUN yarn install
 
+# Expose Port
+EXPOSE 3000
+
 CMD ["node", "index.js"]
