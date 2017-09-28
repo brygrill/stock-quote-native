@@ -1,6 +1,5 @@
 const express = require('express');
 const graphqlHTTP = require('express-graphql');
-const axios = require('axios');
 const values = require('lodash.values');
 const {
   GraphQLSchema,
@@ -16,17 +15,6 @@ exports.app = admin => {
   // connect to db
   const db = admin.database();
   const ref = db.ref('poll');
-
-  // fetch data
-  // let securitiesArr = [];
-  // let coinsArr = [];
-  // ref.on('value', snapshot => {
-  //   const securitiesData = snapshot.val();
-  //   securitiesArr = values(securitiesData.securities);
-  //   coinsArr = values(securitiesData.coins);
-  // });
-
-  // ref.once('value').then(data => {});
 
   // Construct Securities Type
   const SecurityType = new GraphQLObjectType({
@@ -90,15 +78,6 @@ exports.app = admin => {
   const schema = new GraphQLSchema({
     query,
   });
-
-  // Fetch prices middleware
-  // Fire function to update prices every time graphql is hit
-  const fetchPrices = (req, res, next) => {
-    axios.get('https://us-central1-quoteum-fd8e3.cloudfunctions.net/prices');
-    next();
-  };
-
-  app.use(fetchPrices);
 
   app.use(
     '/',

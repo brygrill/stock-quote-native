@@ -92,7 +92,7 @@ exports.prices = admin => {
           });
           const { price, perc, time, usdVolume } = coinRecord;
           const last = numeral(price).format('$0,0.00');
-          const priceChgPerc = item === 'BTC' ? numeral(perc / 100).format('0.00%') : numeral(perc).format('0.00%');
+          const priceChgPerc = numeral(perc / 100).format('0.00%');
           const lastUpdatedAt = moment(time).tz(timeZone).format();
           const volume = numeral(usdVolume).format('($0.00a)').toUpperCase();
           updateFeed(
@@ -107,7 +107,6 @@ exports.prices = admin => {
             null,
             priceChgPerc,
             volume);
-          console.log(coinRecord);
         });
       })
       .catch(err => {

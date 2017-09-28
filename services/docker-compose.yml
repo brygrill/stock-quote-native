@@ -1,9 +1,0 @@
-alphavantage:
-    build: ./feed/alpha-vantage
-    restart: always
-    container_name: ALPHA_VANTAGE_FEED
-
-coincap:
-    build: ./feed/coincap-ws
-    restart: always
-    container_name: COINCAP_FEED
