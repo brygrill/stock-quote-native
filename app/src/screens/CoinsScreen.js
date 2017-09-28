@@ -51,7 +51,7 @@ export default class RealtimeScreen extends Component {
         price={last}
         change={priceChgPerc}
         lastUpdatedAt={lastUpdatedAt}
-        formatVol
+        formatVol={false}
         volume={volume}
         status={statusDay}
       />
