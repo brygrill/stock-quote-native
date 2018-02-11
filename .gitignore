@@ -1,24 +1,17 @@
-Expo
-app/.expo/**/*
-
-#Vender data
-lib
-
-# Data
-data
-database.rules.json
+node_modules/**/*
+.expo/**/*
 
 # Secrets
 .env
-config.js
+.env.*
 config.json
-serviceAccountKey.json
-secrets.js
+
+# Data
+data
 
 # Logs
 logs
 *.log
-npm-debug.log*
 
 # Testing
 coverage
@@ -27,6 +20,7 @@ coverage
 build
 deploy
 dist
+*/.next
 
 # Runtime data
 pids
@@ -38,31 +32,6 @@ lib-cov
 
 # Coverage directory used by tools like istanbul
 coverage
-
-# nyc test coverage
-.nyc_output
-
-# Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
-.grunt
-
-# node-waf configuration
-.lock-wscript
-
-# Compiled binary addons (http://nodejs.org/api/addons.html)
-build/Release
-
-# Dependency directories
-node_modules
-jspm_packages
-
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# OS
-.DS_Store
 
 # Compiled source
 *.com
@@ -91,6 +60,11 @@ jspm_packages
 *.zip
 *~
 
+# Vim related
+Session.vim
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+
 # OS or Editor folders
 ._*
 .cache
@@ -113,3 +87,7 @@ node_modules
 # Python
 *.pyc
 
+# Node
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
